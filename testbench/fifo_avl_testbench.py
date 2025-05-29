@@ -1,8 +1,3 @@
-# Copyright 2024 Apheleia
-#
-# Description:
-# Apheleia phase example
-
 import avl
 import avl.templates
 import cocotb
