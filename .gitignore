@@ -4,6 +4,7 @@
 *.json
 vvv
 __pychache__
+simbuild
 .vscode
 avl*
 
