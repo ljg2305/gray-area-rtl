@@ -5,20 +5,22 @@ This repo is a bit of a gray area as its sole purpose is for learning and docume
 ## Getting Started
 
 ### Requirements 
-    Software:
-    [Verilator](https://www.veripool.org/verilator/) 
-    [GTKWave](https://gtkwave.sourceforge.net/) 
-    [Graphviz](https://graphviz.org/download/) 
-    Python Packages:
+#### Software: \
+[Verilator](https://www.veripool.org/verilator/) \
+[GTKWave](https://gtkwave.sourceforge.net/) \
+[Graphviz](https://graphviz.org/download/) 
+
+#### Python Packages: 
     `avl-core`
     `cocotb`
     `cocotb-test`
     `pytest`
 
-    Run:
-    ```source init.sh
-    make sim
-    ```
+#### Run:
+```
+source init.sh
+make sim
+```
 
 ### Structure 
 
