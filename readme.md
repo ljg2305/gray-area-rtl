@@ -25,12 +25,12 @@ make sim
 ### Structure 
 
 ### Simulator / Verification
-    Most smoke tests are written in [cocotb](https://github.com/cocotb/cocotb) which allows the testbenches to be written in python. 
-    Additionally to this I am learning the basic principals of UVM through Andy Bond's new [AVL project](https://github.com/projectapheleia/avl_beta) currently in beta testing. With this I will be able to more thoroughly test the components through randomised testing and collect coverage on this. 
-    The framework I will be using for testing is the [cocotb-test](https://github.com/themperek/cocotb-test) along with pytest which allows for Makefile style execution through a python configuration file.
-    If I find this to be insufficient I will create a python wrapper to help with this. 
+Most smoke tests are written in [cocotb](https://github.com/cocotb/cocotb) which allows the testbenches to be written in python. 
+Additionally to this I am learning the basic principals of UVM through Andy Bond's new [AVL project](https://github.com/projectapheleia/avl_beta) currently in beta testing. With this I will be able to more thoroughly test the components through randomised testing and collect coverage on this. 
+The framework I will be using for testing is the [cocotb-test](https://github.com/themperek/cocotb-test) along with pytest which allows for Makefile style execution through a python configuration file.
+If I find this to be insufficient I will create a python wrapper to help with this. 
 
-    Additionally to this using built in system verilog assertions to ensure the designs are not enteted into an invalid state/configuration.  
+Additionally to this using built in system verilog assertions to ensure the designs are not enteted into an invalid state/configuration.  
 
 ## Components 
 
