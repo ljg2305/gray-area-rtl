@@ -6,8 +6,9 @@ pip install cocotb
 pip install cocotb-test
 
 git clone git@github.com:projectapheleia/avl_beta.git
-cd avl
+cd avl_beta
 pip install .
+cd ..
 
 
 export PYTHONPATH=${PYTHONPATH}

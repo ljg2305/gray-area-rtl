@@ -15,6 +15,11 @@ This repo is a bit of a gray area as its sole purpose is for learning and docume
     `cocotb-test`
     `pytest`
 
+    Run:
+    ```source init.sh
+    make sim
+    ```
+
 ### Structure 
 
 ### Simulator / Verification
