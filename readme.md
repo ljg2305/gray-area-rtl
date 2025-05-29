@@ -4,11 +4,26 @@ This repo is a bit of a gray area as its sole purpose is for learning and docume
 
 ## Getting Started
 
+### Requirements 
+    Software:
+    [Verilator](https://www.veripool.org/verilator/) 
+    [GTKWave](https://gtkwave.sourceforge.net/) 
+    [Graphviz](https://graphviz.org/download/) 
+    Python Packages:
+    `avl-core`
+    `cocotb`
+    `cocotb-test`
+    `pytest`
+
 ### Structure 
 
-### Simulator 
+### Simulator / Verification
+    Most smoke tests are written in [cocotb](https://github.com/cocotb/cocotb) which allows the testbenches to be written in python. 
+    Additionally to this I am learning the basic principals of UVM through Andy Bond's new [AVL project](https://github.com/projectapheleia/avl_beta) currently in beta testing. With this I will be able to more thoroughly test the components through randomised testing and collect coverage on this. 
+    The framework I will be using for testing is the cocotb-test along with pytest which allows for Makefile style execution through a python configuration file.
+    If I find this to be insufficient I will create a python wrapper to help with this. 
 
-### Debuging
+    Additionally to this using built in system verilog assertions to ensure the designs are not enteted into an invalid state/configuration.  
 
 ## Components 
 
@@ -83,7 +98,7 @@ Lawrence Gray
 
 ## License
 
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
+This project is licensed under the MIT License - see the LICENSE.md file for details
 
 ## Acknowledgments
 
