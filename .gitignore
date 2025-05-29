@@ -1,0 +1,9 @@
+*.png
+*.xml
+*.vcd
+*.json
+vvv
+__pychache__
+.vscode
+avl*
+
