@@ -1,9 +1,9 @@
 import avl
 import avl.templates
 import cocotb
+import copy
 from cocotb.triggers import RisingEdge
 
-import copy
 
 class fifo_item(avl.Sequence_Item):
     def __init__(self, name, parent_sequence):
@@ -85,7 +85,7 @@ class fifo_monitor(avl.templates.Vanilla_Monitor):
             self.cg.sample()
 
     async def report_phase(self):
-        print(self.cg.report(full=True))
+        cocotb.log.warning(self.cg.report(full=True))
 
 class fifo_model(avl.templates.Vanilla_Model):
     def __init__(self, name, parent):

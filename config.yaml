@@ -1,0 +1,37 @@
+global: 
+  simulator:      verilator
+  toplevel_lang:  verilog
+  verilog_sources: 
+    - rtl/fifo.sv
+    - rtl/pulse_gen.sv
+    - rtl/serdes.sv 
+    - rtl/serdes_fifo.sv 
+    - rtl/serializer.sv 
+    - rtl/deserializer.sv 
+  testbench_paths:
+    - testbench/
+tests: 
+  fifo_avl_testbench: 
+    top_level           : fifo
+    testbench_module    : fifo_avl_testbench
+    extra_args          : 
+      - "--trace" 
+      - "--trace-structs"
+  fifo_testbench: 
+    top_level           : fifo
+    testbench_module    : fifo_testbench
+    extra_args          : 
+      - "--trace" 
+      - "--trace-structs"
+  pulse_testbench: 
+    top_level           : pulse
+    testbench_module    : pulse_testbench
+    extra_args          : 
+      - "--trace" 
+      - "--trace-structs"
+  serdes_fifo_testbench: 
+    top_level           : serdes_fifo 
+    testbench_module    : serdes_fifo_testbench
+    extra_args          : 
+      - "--trace" 
+      - "--trace-structs"
