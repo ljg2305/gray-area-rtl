@@ -90,7 +90,7 @@ No
 #### Description:
 As per the requirents in the "Buffered SerDes" we need a basic module to generate a single cycle pulse to be able to convert the serialisers ready signal which is multi cycle. But if the fifo is empty then the "single cycle" pulse must be held until data is available. 
 #### Imlemetation Notes: 
-A basic smoke test was written for this and waves visually inspected.
+A basic smoke test was written for this and waves visually inspected. Tested in place in buffered SerDes. 
 #### Complete: 
 Yes
 
