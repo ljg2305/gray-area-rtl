@@ -5,16 +5,16 @@ This repo is a bit of a gray area as its sole purpose is for learning and docume
 ## Getting Started
 
 ### Requirements 
-#### Software: \
+#### Software: 
 [Verilator](https://www.veripool.org/verilator/) \
 [GTKWave](https://gtkwave.sourceforge.net/) \
 [Graphviz](https://graphviz.org/download/) 
 
 #### Python Packages: 
-    `avl-core`
-    `cocotb`
-    `cocotb-test`
-    `pytest`
+`avl-core`
+`cocotb`
+`cocotb-test`
+`pytest`
 
 #### Run:
 ```
@@ -27,8 +27,7 @@ make sim
 ### Simulator / Verification
 Most smoke tests are written in [cocotb](https://github.com/cocotb/cocotb) which allows the testbenches to be written in python. 
 Additionally to this I am learning the basic principals of UVM through Andy Bond's new [AVL project](https://github.com/projectapheleia/avl_beta) currently in beta testing. With this I will be able to more thoroughly test the components through randomised testing and collect coverage on this. 
-The framework I will be using for testing is the [cocotb-test](https://github.com/themperek/cocotb-test) along with pytest which allows for Makefile style execution through a python configuration file.
-If I find this to be insufficient I will create a python wrapper to help with this. 
+For running tests I have put together a fairly basic framework to suit the limited needs of this project allowing tests to be defined and configured through `config.yaml` and run with `run_gray_test ...`
 
 Additionally to this using built in system verilog assertions to ensure the designs are not enteted into an invalid state/configuration.  
 
@@ -37,7 +36,6 @@ Additionally to this using built in system verilog assertions to ensure the desi
 ### FIFO:
 #### Description:
 A basic parameterizable FIFO with a handshake based interface. This also should have full and empty flags.
-#### Specification: 
 #### Imlemetation Notes: 
 This FIFO is implemented with a read_pointer and write_pointer which have a width of log2 + 1 of the fifo depth. The extra bit can be used to track a wraparound which can help distingush between full and empty. The biggest issue with this is that the depth must be a power of 2 as it uses the implicit addition overflow. A little more logic would be required to make this wraparound flag work for any depth. But for neatness I will leave it as it is for now and add an assertion. 
 #### Complete: 
@@ -46,29 +44,30 @@ Yes
 ### Async FIFO: 
 #### Description:
 Same as FIFO but updated to use graycoding and distance based logic. 
-#### Specification: 
 #### Imlemetation Notes: 
 #### Complete: 
 No
 
 ### Serializer:
 #### Description:
-#### Specification: 
+On recipt of a valid N-bit input, this module starts to serialise the data marking the start of the packet by setting start high for a single cycle with the first bit of data. 
+Enable signal should be high for the entirety of a packet transmission. 
+Ready should go high when the module is ready to recieve a new packet, this should be done in a way that there can be back to back packets every N-cycles. ie, no downtime between packet transmissions. 
+If a new valid packet arrives before serialisation is complete then the new packet starts to transmit, discarding the old packet. 
 #### Imlemetation Notes: 
 #### Complete: 
 Yes
 
 ### De-Serializer:
 #### Description:
-Assuming that the Serializer and De-Serializer were correctly implemeted as per the specification then this module should be mostly a wiring job. A valid packet should go in and the same valid packet should come out.
-#### Specification: 
+On a start signal this module takes its single bit data input and collects it into N-bit registers. Once N-bits are recieved the vaild packet is output for a single cycle. If a start comes mid packet then the current packet is discarded and the deserialisation starts on the new packet. 
 #### Imlemetation Notes: 
 #### Complete: 
 Yes 
 
 ### SerDes:
 #### Description:
-#### Specification: 
+Assuming that the Serializer and De-Serializer were correctly implemeted as per the specification then this module should be mostly a wiring job. A valid packet should go in and the same valid packet should come out.
 #### Imlemetation Notes: 
 #### Complete: 
 Yes
@@ -76,7 +75,6 @@ Yes
 ### Buffered SerDes:
 #### Description:
 The SerDes operates on a single clock domain which means the it can only process one packet every N cycles where N == DATA_WIDTH. Therefore if the parallel packets arrive back to back then you can end up dropping packets. Adding a FIFO to the front of it will then allow it to buffer packets as they come in. Whilst the maximum average datarate is unchanged this allows for bursty packets with a requirement for quiet periods for the FIFO to drain. 
-#### Specification: 
 #### Imlemetation Notes: 
 There is slight friction between the FIFO and the Serializer interfaces. The serializer ready flag is high for the whole time it is ready to take a new packet and it could take multiple cycles for the FIFO to acknowledge the ready and the set the ready low. At which point the FIFO will have sent back to back packets as it can output one packet per cycle. To solve this a small request controller was written that creates a single cycle "ready" pulse unless the fifo is empty then it will hold the ready until data is available.  
 For the testbech an AVL constrained random testbench has been written: 
@@ -88,10 +86,17 @@ This would allow for bursty traffic.
 #### Complete: 
 No
 
+### Pulse Generator:
+#### Description:
+As per the requirents in the "Buffered SerDes" we need a basic module to generate a single cycle pulse to be able to convert the serialisers ready signal which is multi cycle. But if the fifo is empty then the "single cycle" pulse must be held until data is available. 
+#### Imlemetation Notes: 
+A basic smoke test was written for this and waves visually inspected.
+#### Complete: 
+Yes
+
 ### Sniffer:
 #### Description:
 To add some flavour to the SerDes we can put some sort of packet sniffer on the wire in the middle. This could look out for a specific value. When this value is found we can block the packet, nullify the packet or corrupt the packet. Depending on what this does the latency through this module would vary. For the purpose of the CRC module we are going to corrupt the packet as this will act as a verification tool. As to not affect existing testbenches this is going to be included based on a module parameter. 
-#### Specification: 
 #### Imlemetation Notes: 
 #### Complete: 
 No
