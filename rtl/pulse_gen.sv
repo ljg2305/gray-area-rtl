@@ -10,20 +10,6 @@ module pulse_gen (
     logic previous_in, hold_latched;
     logic raw_pulse, held_pulse;
 
-    //pulse generator 
-    //ready in : 0000011111000
-    //empty    : 0000000000000
-    //ready out: 0000010000000
-
-    //ready in : 0000011111000
-    //empty    : 0001111000000
-    //ready out: 0000011000000
-
-    // this adds the requirement for one extra flop to track if pulse has been sent 
-    //ready in : 0000011111000
-    //empty    : 0000000111000
-    //ready out: 0000010000000
-
     always_ff @(posedge clk) begin
         if (!rst_n) begin
             previous_in <= 1'b0;
@@ -42,8 +28,7 @@ module pulse_gen (
 
     assign raw_pulse = (!previous_in && signal_in);
 
-    // hold_latched && hold ensures that the pulse is not held for a cycle longer than it should be 
-    assign held_pulse = (!previous_in || hold_latched && hold) && signal_in;
+    assign held_pulse = (!previous_in || hold_latched ) && signal_in;
     assign pulse_out = held_pulse;
 
 `ifndef synthesis 

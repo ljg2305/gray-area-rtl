@@ -9,9 +9,12 @@ module serdes_fifo #(
         output logic ready_out,
 
         output  logic [DATA_WIDTH-1:0] parallel_out,
-        output  logic valid_out
-    ); 
+        output  logic valid_out,
 
+        // FIFO flags
+        output logic fifo_full, 
+        output logic fifo_empty
+    ); 
 
     serdes #(.FIFO_DEPTH(16),.DATA_WIDTH(DATA_WIDTH)) serdes_inst 
         (
@@ -21,13 +24,21 @@ module serdes_fifo #(
             .valid_in,
             .ready_out,
             .parallel_out,
-            .valid_out
+            .valid_out,
+            .fifo_full, 
+            .fifo_empty
         );
-//dump vcd 
 
+
+`ifndef synthesis 
+// assertions
+
+// dump vcd 
 initial begin
-    $dumpfile("dump.vcd");
-    $dumpvars(1,serdes_fifo);
+  $dumpfile("dump.vcd");
+  $dumpvars(1,serdes_fifo);
 end
+
+`endif //synthesis
 
 endmodule

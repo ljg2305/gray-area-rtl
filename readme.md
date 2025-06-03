@@ -79,6 +79,12 @@ The SerDes operates on a single clock domain which means the it can only process
 #### Specification: 
 #### Imlemetation Notes: 
 There is slight friction between the FIFO and the Serializer interfaces. The serializer ready flag is high for the whole time it is ready to take a new packet and it could take multiple cycles for the FIFO to acknowledge the ready and the set the ready low. At which point the FIFO will have sent back to back packets as it can output one packet per cycle. To solve this a small request controller was written that creates a single cycle "ready" pulse unless the fifo is empty then it will hold the ready until data is available.  
+For the testbech an AVL constrained random testbench has been written: 
+This circuit can only take an average of one packet every 8 cycles.
+The fifo enables the ability to buffer the input. 
+Here we are constraining the random value of valid to occour just above 1 in 8 cycles therefore will eventually fill up the fifo and drop packets.
+Increasing the FIFO depth would increase the amount of time before packets are dropped. 
+This would allow for bursty traffic.
 #### Complete: 
 No
 

@@ -31,9 +31,9 @@ module deserializer #(
 
             if (start) begin 
                 if (enable)  
-                    bit_counter <= 1'b1;
+                    bit_counter <= 1;
                 else 
-                    bit_counter <= 1'b0;
+                    bit_counter <= '0;
             end else if (in_packet && enable) begin 
                 bit_counter <= bit_counter + 1;
             end

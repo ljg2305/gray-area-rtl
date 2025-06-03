@@ -109,7 +109,7 @@ if __name__ == "__main__":
         "--jobs",
         help="Number of parallel jobs (default: 4)",
         type=int,
-        default=4,
+        default=1,
     )
     args = parser.parse_args()
 

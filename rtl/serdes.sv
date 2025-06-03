@@ -10,7 +10,11 @@ module serdes #(
         output logic ready_out,
 
         output  logic [DATA_WIDTH-1:0] parallel_out,
-        input  logic valid_out
+        output  logic valid_out,
+        
+        // FIFO flags
+        output logic fifo_full, 
+        output logic fifo_empty
     ); 
 
     logic serial_out;
@@ -21,7 +25,6 @@ module serdes #(
     logic [DATA_WIDTH-1:0] data_to_serializer;
     logic valid_to_serializer;
     logic ready_from_serializer,ready_to_fifo, previous_ready;
-    logic fifo_full, fifo_empty;
     generate
         if (FIFO_DEPTH == 0) begin 
             // bypass fifo
@@ -29,6 +32,8 @@ module serdes #(
             assign data_to_serializer = parallel_in;
             assign valid_to_serializer = valid_in;
             assign ready_out = ready_from_serializer; 
+            assign fifo_full = 1'b0;
+            assign fifo_empty = 1'b0;
         end else begin 
             fifo #(.DATA_WIDTH(DATA_WIDTH),.FIFO_DEPTH(FIFO_DEPTH)) fifo_inst
                 (
@@ -41,27 +46,17 @@ module serdes #(
                     .write_valid(valid_in),
                     .write_ready(ready_out),
                     .read_valid(valid_to_serializer),
-                    .read_ready(ready_from_serializer)
+                    .read_ready(ready_to_fifo)
                 );
                 
-            //pulse generator 
-            //ready in : 0000011111000
-            //empty    : 0000000000000
-            //ready out: 0000010000000
+            pulse_gen pulse_gen_inst (
+                .clk(clk),
+                .rst_n(rst_n),
+                .signal_in(ready_from_serializer),
+                .hold(fifo_empty), 
+                .pulse_out(ready_to_fifo)
+            ); 
 
-            //ready in : 0000011111000
-            //empty    : 0001111000000
-            //ready out: 0000011000000
-
-            // TODO: add empty condition 
-            always_ff @(posedge clk) begin
-                if (!rst_n) begin
-                    previous_ready <= 1'b0;
-                end else begin
-                    previous_ready <= ready_from_serializer;
-                end
-            end
-            assign ready_to_fifo = (!previous_ready || fifo_empty) && ready_from_serializer;
 
         end 
     endgenerate

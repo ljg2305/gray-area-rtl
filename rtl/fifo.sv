@@ -71,11 +71,19 @@ initial begin
     end
 end
 
-//dump vcd 
-initial begin
-    $dumpfile("dump.vcd");
-    $dumpvars(1,fifo);
+assert property (@(posedge clk) !(full && empty));
+
+always @(posedge clk) begin
+    if (full & write_valid) begin 
+        $warning("write attempted to fifo when fifo is full");
+    end 
 end
+
+// dump vcd 
+ initial begin
+     $dumpfile("dump.vcd");
+     $dumpvars(1,fifo);
+ end
 
 `endif //synthesis
 
