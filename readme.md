@@ -80,6 +80,14 @@ There is slight friction between the FIFO and the Serializer interfaces. The ser
 #### Complete: 
 No
 
+### Pulse Generator:
+#### Description:
+As per the requirents in the "Buffered SerDes" we need a basic module to generate a single cycle pulse to be able to convert the serialisers ready signal which is multi cycle. But if the fifo is empty then the "single cycle" pulse must be held until data is available. 
+#### Imlemetation Notes: 
+A basic smoke test was written for this and waves visually inspected.
+#### Complete: 
+Yes
+
 ### Sniffer:
 #### Description:
 To add some flavour to the SerDes we can put some sort of packet sniffer on the wire in the middle. This could look out for a specific value. When this value is found we can block the packet, nullify the packet or corrupt the packet. Depending on what this does the latency through this module would vary. For the purpose of the CRC module we are going to corrupt the packet as this will act as a verification tool. As to not affect existing testbenches this is going to be included based on a module parameter. 
