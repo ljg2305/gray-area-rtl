@@ -20,8 +20,7 @@ class serdes_item(avl.Sequence_Item):
         # Here we are constraining the random value of valid to occour just above 1 in 8 cycles therefore will eventually fill up the fifo and drop packets.
         # Increasing the FIFO depth would increase the amount of time before packets are dropped. 
         # This would allow for bursty traffic 
-        self.add_constraint("c_valid",lambda x: x == int(random.random()<0.126), self.valid_in)
-        #self.add_constraint("c_valid_gate", lambda x,y: Implies(x== 0, y==0), self.valid_in, self.parallel_in)
+        self.add_constraint("c_valid",lambda x: x == int(random.random() < 0.126), self.valid_in)
 
         # Outputs : for observation/prediction
         self.parallel_out    = avl.Uint8("parallel_out", 0, fmt=str,auto_random=False)
