@@ -90,19 +90,23 @@ No
 #### Description:
 As per the requirents in the "Buffered SerDes" we need a basic module to generate a single cycle pulse to be able to convert the serialisers ready signal which is multi cycle. But if the fifo is empty then the "single cycle" pulse must be held until data is available. 
 #### Imlemetation Notes: 
-A basic smoke test was written for this and waves visually inspected.
+A basic smoke test was written for this and waves visually inspected. Tested in place in buffered SerDes. 
 #### Complete: 
 Yes
 
-### Sniffer:
+### Sniffer/Corruptor:
 #### Description:
 To add some flavour to the SerDes we can put some sort of packet sniffer on the wire in the middle. This could look out for a specific value. When this value is found we can block the packet, nullify the packet or corrupt the packet. Depending on what this does the latency through this module would vary. For the purpose of the CRC module we are going to corrupt the packet as this will act as a verification tool. As to not affect existing testbenches this is going to be included based on a module parameter. 
 #### Imlemetation Notes: 
 #### Complete: 
 No
 
-### CRC:
+### ECC:
 #### Description:
+For this we will start off with a basic hamming error correction. The exact number of parity bits to data are arbitrary so I am going to decide to send a 32 bit word. Ideally this will be parameterisable so works for different word width/splits. 
+Hamming coding can detect up to 2 errors but only correct a single error. For long word lengths this is not ideal, but the longer the word length the higher chance of errors occouring. Additionally in an error caused by some sort of noise, you are likely to get adjacent errors. To work around this you can split your packet into multiple chunks and calculate the hamming code for each chunk. Once the code is included then you can interleave the data which then means that N adjacent bits can be corrected by unraveling the recived data and preforming error correction on the chunks. (Reed solomon coding is known for being able to handle this better and more efficiently but is far more complex so maybe its worth trying that in the future.) 
+An additional inefficnency is that hamming codes work most efficently on a packet of size 2^N where N+1 of the bits are used by the code. For example a 64 bit packet can only hold 57 bits of data as 7 bits are used by the code. Therefore to have for example a full 32 bit packet you would need a total of 39 bits.
+But in interest of interleaving packets, I am going to do a 32 bit packet but split into two chunks which would mean 32 bits of data + 2 * 6 bits of parity for a total of 42 bits. Not super efficient but thats not the aim of the game. 
 #### Specification: 
 #### Imlemetation Notes: 
 #### Complete: 
