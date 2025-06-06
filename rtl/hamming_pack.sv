@@ -16,7 +16,6 @@ module hamming_pack #(
     logic [PADDED_INPUT_WIDTH-1:0] data_in_padded;
     logic [PADDED_CODE_WIDTH-1:0] packed_input;
 
-    // TODO update to use real data 
     assign data_in_padded = {{(PADDED_INPUT_WIDTH-DATA_WIDTH){1'b0}},data_in};
 
 
