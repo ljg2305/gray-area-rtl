@@ -44,7 +44,7 @@ end
 
 assign extended_parity = ^data_in_i[CODED_WIDTH-1:1];
 always_comb begin
-    case ({|parity_bits, extended_parity!=data_in_i[0]})
+    unique case ({|parity_bits, extended_parity!=data_in_i[0]})
         2'b00: num_errors_o = 2'b00; // No errors
         2'b01: num_errors_o = 2'b10; // 2 errors
         2'b10: num_errors_o = 2'b10; // 2 error
@@ -63,18 +63,18 @@ end
 genvar i; 
 generate
 for (i = 0; i < ADDR_WIDTH; i++) begin
-    localparam int current_pow = 2 ** i;
-    localparam int next_pow = 2 ** (i + 1);
-    localparam int width = next_pow - current_pow - 1;
-    localparam int data_offset   = current_pow - (i+1);
-    localparam int packed_offset = current_pow + 1;
-    localparam int width_limit = (data_offset + width < DATA_WIDTH)
-                   ? width
-                   : DATA_WIDTH - data_offset;
+    localparam int CURRENT_POW = 2 ** i;
+    localparam int NEXT_POW = 2 ** (i + 1);
+    localparam int WIDTH = NEXT_POW - CURRENT_POW - 1;
+    localparam int DATA_OFFSET   = CURRENT_POW - (i+1);
+    localparam int PACKED_OFFSET = CURRENT_POW + 1;
+    localparam int WIDTH_LIMIT = (DATA_OFFSET + WIDTH < DATA_WIDTH)
+                   ? WIDTH
+                   : DATA_WIDTH - DATA_OFFSET;
 
     if (width  > 0)
-        assign unpacked_input[data_offset +: width_limit]
-               = fixed_data_in[packed_offset+: width_limit];
+        assign unpacked_input[DATA_OFFSET +: WIDTH_LIMIT]
+               = fixed_data_in[PACKED_OFFSET+: WIDTH_LIMIT];
 end
 endgenerate
 
