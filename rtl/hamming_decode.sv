@@ -44,8 +44,8 @@ end
 
 assign extended_parity = ^data_in_i[CODED_WIDTH-1:1];
 always_comb begin
-    // parity bits expected to be 0 
-    // extended parity should be equal to previous calculated 
+    // parity bits expected to be 0
+    // extended parity should be equal to previous calculated
     // only in the case where both of these cases have fired
     // can we be (mostly) sure that we only have a single fault
     unique case ({|parity_bits, extended_parity!=data_in_i[0]})
