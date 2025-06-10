@@ -63,18 +63,18 @@ end
 genvar i; 
 generate
 for (i = 0; i < ADDR_WIDTH; i++) begin
-    localparam int CURRENT_POW = 2 ** i;
-    localparam int NEXT_POW = 2 ** (i + 1);
-    localparam int WIDTH = NEXT_POW - CURRENT_POW - 1;
-    localparam int DATA_OFFSET   = CURRENT_POW - (i+1);
-    localparam int PACKED_OFFSET = CURRENT_POW + 1;
-    localparam int WIDTH_LIMIT = (DATA_OFFSET + WIDTH < DATA_WIDTH)
-                   ? WIDTH
-                   : DATA_WIDTH - DATA_OFFSET;
+    localparam int CurrentPow = 2 ** i;
+    localparam int NextPow = 2 ** (i + 1);
+    localparam int Width = NextPow - CurrentPow - 1;
+    localparam int DataOffset   = CurrentPow - (i+1);
+    localparam int PackedOffset = CurrentPow + 1;
+    localparam int WidthLimit = (DataOffset + Width < DATA_WIDTH)
+                   ? Width
+                   : DATA_WIDTH - DataOffset;
 
-    if (width  > 0)
-        assign unpacked_input[DATA_OFFSET +: WIDTH_LIMIT]
-               = fixed_data_in[PACKED_OFFSET+: WIDTH_LIMIT];
+    if (Width  > 0)
+        assign unpacked_input[DataOffset +: WidthLimit]
+               = fixed_data_in[PackedOffset+: WidthLimit];
 end
 endgenerate
 
