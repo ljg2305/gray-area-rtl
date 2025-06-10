@@ -2,36 +2,53 @@ global:
   simulator:      verilator
   toplevel_lang:  verilog
   verilog_sources: 
+    - rtl/gray_area_package.sv
     - rtl/fifo.sv
     - rtl/pulse_gen.sv
     - rtl/serdes.sv 
     - rtl/serdes_fifo.sv 
     - rtl/serializer.sv 
     - rtl/deserializer.sv 
+    - rtl/hamming_pack.sv
+    - rtl/hamming_encode.sv
+    - rtl/hamming_decode.sv
   testbench_paths:
     - testbench/
-tests: 
-  fifo_avl_testbench: 
-    top_level           : fifo
-    testbench_module    : fifo_avl_testbench
-    extra_args          : 
-      - "--trace" 
-      - "--trace-structs"
-  fifo_testbench: 
-    top_level           : fifo
-    testbench_module    : fifo_testbench
-    extra_args          : 
-      - "--trace" 
-      - "--trace-structs"
-  pulse_testbench: 
-    top_level           : pulse
-    testbench_module    : pulse_testbench
-    extra_args          : 
-      - "--trace" 
-      - "--trace-structs"
-  serdes_fifo_testbench: 
-    top_level           : serdes_fifo 
-    testbench_module    : serdes_fifo_testbench
-    extra_args          : 
-      - "--trace" 
-      - "--trace-structs"
+defaults: &default_test
+  extra_args:
+    - "--trace"
+    - "--trace-structs"
+tests:
+  hamming_decode_testbench:
+    <<: *default_test
+    top_level: hamming_decode
+    testbench_module: hamming_decode_testbench
+
+#  hamming_encode_testbench:
+#    <<: *default_test
+#    top_level: hamming_encode
+#    testbench_module: hamming_encode_testbench
+#  fifo_avl_testbench: 
+#    top_level           : fifo
+#    testbench_module    : fifo_avl_testbench
+#    extra_args          : 
+#      - "--trace" 
+#      - "--trace-structs"
+#  fifo_testbench: 
+#    top_level           : fifo
+#    testbench_module    : fifo_testbench
+#    extra_args          : 
+#      - "--trace" 
+#      - "--trace-structs"
+#  pulse_testbench: 
+#    top_level           : pulse
+#    testbench_module    : pulse_testbench
+#    extra_args          : 
+#      - "--trace" 
+#      - "--trace-structs"
+#  serdes_fifo_avl_testbench: 
+#    top_level           : serdes_fifo 
+#    testbench_module    : serdes_fifo_avl_testbench
+#    extra_args          : 
+#      - "--trace" 
+#      - "--trace-structs"

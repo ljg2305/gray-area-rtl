@@ -97,6 +97,7 @@ def main(yaml_file, max_workers, selected_testbenches):
     # Exit with code 1 if any failed
     if failed_tests:
         sys.exit(1)
+        
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run cocotb tests from YAML")
     parser.add_argument("yaml_file", help="YAML file describing tests")
