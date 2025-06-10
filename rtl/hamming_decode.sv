@@ -1,7 +1,7 @@
 import gray_area_package::*;
 
 module hamming_decode #(
-    DATA_WIDTH = 25 
+    int DATA_WIDTH = 32
 ) (
   input  logic                   clk,
   input  logic                   rst_n,
@@ -25,7 +25,7 @@ logic [ADDR_WIDTH-1:0] parity_bits;
 
 logic [DATA_WIDTH-1:0] unpacked_input;
 
-logic exteded_parity;
+logic extended_parity;
 
 // TODO put in to module to be reused by decoder
 // hamming_parity
@@ -42,41 +42,43 @@ always_comb begin
   end
 end
 
-assign exteded_parity = ^data_in_i[CODED_WIDTH-1:1];
+assign extended_parity = ^data_in_i[CODED_WIDTH-1:1];
 always_comb begin
-    case ({|parity_bits, exteded_parity})
+    case ({|parity_bits, extended_parity!=data_in_i[0]})
         2'b00: num_errors_o = 2'b00; // No errors
         2'b01: num_errors_o = 2'b10; // 2 errors
-        2'b10: num_errors_o = 2'b01; // 1 error
-        2'b11: num_errors_o = 2'b10; // 2 errors
+        2'b10: num_errors_o = 2'b10; // 2 error
+        2'b11: num_errors_o = 2'b01; // 1 errors
     endcase
 end
 
 assign fault_location_o   = parity_bits;
 always_comb begin
     fixed_data_in = data_in_i;
-    if (num_errors_o == 1) begin 
-        fixed_data_in[fault_location_o] = !data_in[fault_location_o];
+    if (num_errors_o == 1) begin
+        fixed_data_in[fault_location_o] = !data_in_i[fault_location_o];
     end 
 end
 
 genvar i; 
 generate
 for (i = 0; i < ADDR_WIDTH; i++) begin
-    // TODO: Fix for non power of 2 coded data width 
     localparam int current_pow = 2 ** i;
     localparam int next_pow = 2 ** (i + 1);
     localparam int width = next_pow - current_pow - 1;
     localparam int data_offset   = current_pow - (i+1);
     localparam int packed_offset = current_pow + 1;
-    localparam int width_limit = (data_offset + width < DATA_WIDTH - 1) ? width : DATA_WIDTH-1 - data_offset;
+    localparam int width_limit = (data_offset + width < DATA_WIDTH)
+                   ? width
+                   : DATA_WIDTH - data_offset;
 
     if (width  > 0)
-        assign unpacked_input[data_offset +: width_limit] = fixed_data_in[packed_offset+: width_limit];
+        assign unpacked_input[data_offset +: width_limit]
+               = fixed_data_in[packed_offset+: width_limit];
 end
 endgenerate
 
 assign data_out_o = unpacked_input;
-assign raw_data_o = data_in_i; 
+assign raw_data_o = data_in_i;
 
 endmodule

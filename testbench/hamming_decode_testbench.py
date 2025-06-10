@@ -9,7 +9,7 @@ import numpy as np
 @cocotb.test
 async def hamming_test(dut):
 
-    data_width = 25
+    data_width = 32
     bits = np.random.randint(0,2,data_width)
 
     result_bits = bits.copy()
@@ -40,7 +40,7 @@ async def hamming_test(dut):
     cocotb.start_soon(Clock(dut.clk,1,units="ns").start()) 
 
     dut.rst_n.value = 1
-    dut.data_in.value = 0
+    dut.data_in_i.value = 0
 
     # reset dut
     dut.rst_n.value = 0
@@ -49,19 +49,19 @@ async def hamming_test(dut):
         await RisingEdge(dut.clk)
     
     dut.rst_n.value = 1
-    dut.data_in.value = int(input)
+    dut.data_in_i.value = int(input)
     
     for count in range(10):
         await RisingEdge(dut.clk)
     
     
-    print(dut.data_out.value.binstr)
+    print(dut.data_out_o.value.binstr)
     print("".join([str(i) for i in np.flip(result_bits)]))
-    print(dut.data_out.value.integer)
+    print(dut.data_out_o.value.integer)
     print(result)
 
-    assert dut.data_out.value.integer == result, \
-    "Error, expected %s, got %s" % (dut.data_out.value.integer,result)
+    assert dut.data_out_o.value.integer == result, \
+    "Error, expected %s, got %s" % (dut.data_out_o.value.integer,result)
   
     parity_bits = bin(reduce(op.xor,[i for i, bit in enumerate(bits) if bit]))
     print(parity_bits)
