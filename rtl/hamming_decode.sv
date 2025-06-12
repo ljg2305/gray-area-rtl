@@ -10,20 +10,20 @@ module hamming_decode #(
   output logic [DATA_WIDTH-1:0]  data_out_o,
   output logic [ADDR_WIDTH-1:0]  fault_location_o,
   output logic [1:0]             num_errors_o
-); 
+);
 
 `include "hamming_defines.svh"
 
-logic [CODED_WIDTH-1:0][ADDR_WIDTH-1:0] parity_input; 
-logic [CODED_WIDTH-1:0][ADDR_WIDTH-1:0] parity_index; 
-logic [CODED_WIDTH-1:0] fixed_data_in; 
+logic [CODED_WIDTH-1:0][ADDR_WIDTH-1:0] parity_input;
+logic [CODED_WIDTH-1:0][ADDR_WIDTH-1:0] parity_index;
+logic [CODED_WIDTH-1:0] fixed_data_in;
 logic [ADDR_WIDTH-1:0] parity_bits;
 
 logic [DATA_WIDTH-1:0] unpacked_input;
 
 logic extended_parity;
 
-hamming_parity #(.DATA_WIDTH(DATA_WIDTH)) hamming_parity_inst ( 
+hamming_parity #(.DATA_WIDTH(DATA_WIDTH)) hamming_parity_inst (
   .clk_i(clk_i),
   .rst_n_i(rst_n_i),
   .data_in_i(data_in_i),
@@ -51,10 +51,10 @@ always_comb begin
     fixed_data_in = data_in_i;
     if (num_errors_o == 1) begin
         fixed_data_in[fault_location_o] = !data_in_i[fault_location_o];
-    end 
+    end
 end
 
-genvar i; 
+genvar i;
 generate
 for (i = 0; i < ADDR_WIDTH; i++) begin
     localparam int CurrentPow = 2 ** i;

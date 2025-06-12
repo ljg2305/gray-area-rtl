@@ -2,31 +2,31 @@ import gray_area_package::*;
 
 module hamming_parity #(
     int DATA_WIDTH = 32,
-    logic IS_ENCODE = 1 
+    logic IS_ENCODE = 1
 ) (
   input  logic                   clk_i,
   input  logic                   rst_n_i,
   input  logic [CODED_WIDTH-1:0] data_in_i,
-  // raw parity outputs for decoding 
+  // raw parity outputs for decoding
   output logic [ADDR_WIDTH-1:0]  parity_bits_o,
   output logic                   extended_parity_o,
   // coded output back fills parity bits into input for encoding
   output logic [CODED_WIDTH-1:0] coded_output_o,
   output logic                   extended_coded_parity_o
-  
-); 
+
+);
 
 `include "hamming_defines.svh"
 
-logic [CODED_WIDTH-1:0][ADDR_WIDTH-1:0] parity_input; 
-logic [CODED_WIDTH-1:0][ADDR_WIDTH-1:0] parity_index; 
-logic [CODED_WIDTH-1:0] fixed_data_in; 
-logic [CODED_WIDTH-1:0] coded_output; 
+logic [CODED_WIDTH-1:0][ADDR_WIDTH-1:0] parity_input;
+logic [CODED_WIDTH-1:0][ADDR_WIDTH-1:0] parity_index;
+logic [CODED_WIDTH-1:0] fixed_data_in;
+logic [CODED_WIDTH-1:0] coded_output;
 
 always_comb begin
 
   for (int i = 0; i < CODED_WIDTH; i++) begin
-      parity_index[i] = i[ADDR_WIDTH-1:0];       
+      parity_index[i] = i[ADDR_WIDTH-1:0];
       parity_input[i] = {ADDR_WIDTH{data_in_i[i]}} & parity_index[i];
   end
 
@@ -37,7 +37,7 @@ always_comb begin
 
   coded_output = data_in_i;
   for (int i = 0; i < ADDR_WIDTH; i++) begin
-    coded_output[2**i] = parity_bits_o[i]; 
+    coded_output[2**i] = parity_bits_o[i];
   end
 
 end

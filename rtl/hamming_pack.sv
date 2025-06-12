@@ -17,7 +17,7 @@ module hamming_pack #(
 
 
     assign packed_input[0] = 1'b0;
-    genvar i; 
+    genvar i;
     generate
     for (i = 0; i < ADDR_WIDTH; i++) begin
         localparam int current_pow = 2 ** i;
@@ -26,7 +26,7 @@ module hamming_pack #(
         localparam int data_offset   = current_pow - (i+1);
         localparam int packed_offset = current_pow + 1;
 
-        // insert placeholder 0 for parity bits 
+        // insert placeholder 0 for parity bits
         assign packed_input[current_pow] = 1'b0;
 
         if (width  > 0)
