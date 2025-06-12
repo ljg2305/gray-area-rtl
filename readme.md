@@ -84,7 +84,7 @@ Here we are constraining the random value of valid to occour just above 1 in 8 c
 Increasing the FIFO depth would increase the amount of time before packets are dropped. 
 This would allow for bursty traffic.
 #### Complete: 
-No
+Yes
 
 ### Pulse Generator:
 #### Description:
@@ -107,6 +107,15 @@ For this we will start off with a basic hamming error correction. The exact numb
 Hamming coding can detect up to 2 errors but only correct a single error. For long word lengths this is not ideal, but the longer the word length the higher chance of errors occouring. Additionally in an error caused by some sort of noise, you are likely to get adjacent errors. To work around this you can split your packet into multiple chunks and calculate the hamming code for each chunk. Once the code is included then you can interleave the data which then means that N adjacent bits can be corrected by unraveling the recived data and preforming error correction on the chunks. (Reed solomon coding is known for being able to handle this better and more efficiently but is far more complex so maybe its worth trying that in the future.) 
 An additional inefficnency is that hamming codes work most efficently on a packet of size 2^N where N+1 of the bits are used by the code. For example a 64 bit packet can only hold 57 bits of data as 7 bits are used by the code. Therefore to have for example a full 32 bit packet you would need a total of 39 bits.
 But in interest of interleaving packets, I am going to do a 32 bit packet but split into two chunks which would mean 32 bits of data + 2 * 6 bits of parity for a total of 42 bits. Not super efficient but thats not the aim of the game. 
+#### Specification: 
+#### Imlemetation Notes: 
+#### Complete: 
+No
+
+### ECC Integration:
+#### Description:
+Integrate the ECC modules into the serdes. 
+Need to work out how best to do this in interest of PPA.
 #### Specification: 
 #### Imlemetation Notes: 
 #### Complete: 
