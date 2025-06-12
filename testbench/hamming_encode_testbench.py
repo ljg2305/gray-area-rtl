@@ -42,31 +42,31 @@ async def hamming_test(dut):
     result = bits.dot(1 << np.arange(bits.shape[-1]))
 
     #generate clock 
-    cocotb.start_soon(Clock(dut.clk,1,units="ns").start()) 
+    cocotb.start_soon(Clock(dut.clk_i,1,units="ns").start()) 
 
-    dut.rst_n.value = 1
-    dut.data_in.value = 0
+    dut.rst_n_i.value = 1
+    dut.data_in_i.value = 0
 
     # reset dut
-    dut.rst_n.value = 0
+    dut.rst_n_i.value = 0
 
     for _ in range(2):
-        await RisingEdge(dut.clk)
+        await RisingEdge(dut.clk_i)
     
-    dut.rst_n.value = 1
-    dut.data_in.value = input
+    dut.rst_n_i.value = 1
+    dut.data_in_i.value = input
     
     for count in range(10):
-        await RisingEdge(dut.clk)
+        await RisingEdge(dut.clk_i)
     
     
-    print(dut.data_out.value.binstr)
+    print(dut.data_out_o.value.binstr)
     print("".join([str(i) for i in np.flip(bits)]))
-    print(dut.data_out.value.integer)
+    print(dut.data_out_o.value.integer)
     print(result)
 
-    assert dut.data_out.value.integer == result, \
-    "Error, expected %s, got %s" % (dut.data_out.value.integer,result)
+    assert dut.data_out_o.value.integer == result, \
+    "Error, expected %s, got %s" % (dut.data_out_o.value.integer,result)
   
     parity_bits = bin(reduce(op.xor,[i for i, bit in enumerate(bits) if bit]))
     print(parity_bits)

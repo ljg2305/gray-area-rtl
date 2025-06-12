@@ -37,26 +37,27 @@ async def hamming_test(dut):
     input = bits.dot(1 << np.arange(bits.shape[-1]))
 
     #generate clock 
-    cocotb.start_soon(Clock(dut.clk,1,units="ns").start()) 
+    cocotb.start_soon(Clock(dut.clk_i,1,units="ns").start()) 
 
-    dut.rst_n.value = 1
+    dut.rst_n_i.value = 1
     dut.data_in_i.value = 0
 
     # reset dut
-    dut.rst_n.value = 0
+    dut.rst_n_i.value = 0
 
     for _ in range(2):
-        await RisingEdge(dut.clk)
+        await RisingEdge(dut.clk_i)
     
-    dut.rst_n.value = 1
+    dut.rst_n_i.value = 1
     dut.data_in_i.value = int(input)
     
     for count in range(10):
-        await RisingEdge(dut.clk)
+        await RisingEdge(dut.clk_i)
     
     
     print(dut.data_out_o.value.binstr)
     print("".join([str(i) for i in np.flip(result_bits)]))
+    print("".join([str(i) for i in np.flip(bits)]))
     print(dut.data_out_o.value.integer)
     print(result)
 

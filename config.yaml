@@ -9,9 +9,11 @@ global:
     - rtl/serdes_fifo.sv 
     - rtl/serializer.sv 
     - rtl/deserializer.sv 
-    - rtl/hamming_pack.sv
+    - rtl/hamming_pad.sv
     - rtl/hamming_encode.sv
     - rtl/hamming_decode.sv
+  verilog_include_dirs:
+    - rtl/
   testbench_paths:
     - testbench/
 defaults: &default_test
