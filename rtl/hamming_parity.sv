@@ -1,8 +1,7 @@
 import gray_area_package::*;
 
 module hamming_parity #(
-    int DATA_WIDTH = 32,
-    logic IS_ENCODE = 1
+    int DATA_WIDTH = 32
 ) (
   input  logic                   clk_i,
   input  logic                   rst_n_i,
