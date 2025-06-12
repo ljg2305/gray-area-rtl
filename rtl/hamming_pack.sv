@@ -1,22 +1,19 @@
 import gray_area_package::*;
 
 module hamming_pack #(
-   DATA_WIDTH = 32,
-   ADDR_WIDTH = hamming_address_width(DATA_WIDTH),
-   CODE_BITS = ADDR_WIDTH  + 1,
-   OUTPUT_WIDTH = DATA_WIDTH + CODE_BITS
+   DATA_WIDTH = 32
 ) (
-    input  logic [DATA_WIDTH-1:0] data_in,
-    output logic [OUTPUT_WIDTH-1:0] data_out
+    input  logic [DATA_WIDTH-1:0]   data_in_i,
+    output logic [CODED_WIDTH-1:0] data_out_o
 );
 
-    parameter PADDED_CODE_WIDTH = 2 ** (ADDR_WIDTH);
-    parameter PADDED_INPUT_WIDTH = PADDED_CODE_WIDTH - CODE_BITS;
+    `include "hamming_defines.svh"
+
 
     logic [PADDED_INPUT_WIDTH-1:0] data_in_padded;
     logic [PADDED_CODE_WIDTH-1:0] packed_input;
 
-    assign data_in_padded = {{(PADDED_INPUT_WIDTH-DATA_WIDTH){1'b0}},data_in};
+    assign data_in_padded = {{(PADDED_INPUT_WIDTH-DATA_WIDTH){1'b0}},data_in_i};
 
 
     assign packed_input[0] = 1'b0;
@@ -37,6 +34,6 @@ module hamming_pack #(
     end
     endgenerate
 
-    assign data_out = packed_input[OUTPUT_WIDTH-1:0];
+    assign data_out_o = packed_input[CODED_WIDTH-1:0];
 
 endmodule
