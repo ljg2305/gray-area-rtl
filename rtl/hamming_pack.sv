@@ -1,7 +1,7 @@
 import gray_area_package::*;
 
-module hamming_pack #(
-   DATA_WIDTH = 32
+module hamming_pad #(
+   int DATA_WIDTH = 32
 ) (
     input  logic [DATA_WIDTH-1:0]   data_in_i,
     output logic [CODED_WIDTH-1:0] data_out_o

@@ -21,7 +21,7 @@ logic [CODED_WIDTH-1:0][ADDR_WIDTH-1:0] parity_index;
 logic [CODED_WIDTH-1:0] packed_input;
 logic [CODED_WIDTH-1:0] extended_coded_output;
 
-hamming_pack #(.DATA_WIDTH(DATA_WIDTH)) hamming_pad_inst (
+hamming_pad #(.DATA_WIDTH(DATA_WIDTH)) hamming_pad_inst (
   .data_in_i(data_in_i),
   .data_out_o(packed_input)
 );
