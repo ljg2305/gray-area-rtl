@@ -5,27 +5,27 @@ import copy
 from cocotb.triggers import RisingEdge
 
 
-class fifo_item(avl.Sequence_Item):
+class fifo_item(avl.SequenceItem):
     def __init__(self, name, parent_sequence):
         super().__init__(name, parent_sequence)
 
         # Inputs : Randomised 
         self.data_in     = avl.Uint8("data_in", 0, fmt=str)
-        self.write_valid = avl.Logic("write_valid", 0, fmt=str, width=1, signed=False)
-        self.read_ready  = avl.Logic("read_ready", 0, fmt=str, width=1, signed=False)
+        self.write_valid = avl.Logic("write_valid", 0, fmt=str, width=1)
+        self.read_ready  = avl.Logic("read_ready", 0, fmt=str, width=1)
 
         # Outputs : for observation/prediction
         self.data_out    = avl.Uint8("data_out", 0, fmt=str,auto_random=False)
-        self.write_ready  = avl.Logic("write_ready", 0, fmt=str,auto_random=False, width=1, signed=False)
-        self.read_valid  = avl.Logic("read_valid", 0, fmt=str,auto_random=False, width=1, signed=False)
-        self.full  = avl.Logic("full", 0, fmt=str,auto_random=False, width=1, signed=False)
-        self.empty  = avl.Logic("empty", 0, fmt=str,auto_random=False, width=1, signed=False)
+        self.write_ready  = avl.Logic("write_ready", 0, fmt=str,auto_random=False, width=1)
+        self.read_valid  = avl.Logic("read_valid", 0, fmt=str,auto_random=False, width=1)
+        self.full  = avl.Logic("full", 0, fmt=str,auto_random=False, width=1)
+        self.empty  = avl.Logic("empty", 0, fmt=str,auto_random=False, width=1)
 
     def randomize(self):
         super().randomize()
 
 # Driver is simple, takes randomised inputs from sequencer and writes to the DUT
-class fifo_driver(avl.templates.Vanilla_Driver):
+class fifo_driver(avl.templates.VanillaDriver):
     async def reset(self):
         self.hdl.data_in.value = 0
         self.hdl.write_valid.value = 0
@@ -51,7 +51,7 @@ class fifo_driver(avl.templates.Vanilla_Driver):
             item.set_event("done")
 
 # Monitor also simply reads the dut and exports the trasaction on each clock edge
-class fifo_monitor(avl.templates.Vanilla_Monitor):
+class fifo_monitor(avl.templates.VanillaMonitor):
     def __init__(self, name, parent):
         super().__init__(name, parent)
 
@@ -87,7 +87,7 @@ class fifo_monitor(avl.templates.Vanilla_Monitor):
     async def report_phase(self):
         cocotb.log.warning(self.cg.report(full=True))
 
-class fifo_model(avl.templates.Vanilla_Model):
+class fifo_model(avl.templates.VanillaModel):
     def __init__(self, name, parent):
        super().__init__(name, parent)
        self.fifo = avl.Fifo(16)
@@ -161,7 +161,7 @@ class fifo_model(avl.templates.Vanilla_Model):
 
 # this sets up common signals such as clock and reset and 
 # instantates N-agents (as determied by factory settings)
-class fifo_env(avl.templates.Vanilla_Env):
+class fifo_env(avl.templates.VanillaEnv):
     def __init__(self, name, parent):
         super().__init__(name, parent)
   
@@ -182,10 +182,10 @@ async def test(dut):
     # vanilla.py references classes which may be overridden therefore when for example you
     # want to make some override to the monitor class, you do not need to re-write the agent class
     # to include this modified monitor. 
-    avl.Factory.set_override_by_type(avl.templates.Vanilla_Driver, fifo_driver)
-    avl.Factory.set_override_by_type(avl.templates.Vanilla_Monitor, fifo_monitor)
-    avl.Factory.set_override_by_type(avl.Sequence_Item, fifo_item)
-    avl.Factory.set_override_by_type(avl.templates.Vanilla_Model, fifo_model)
+    avl.Factory.set_override_by_type(avl.templates.VanillaDriver, fifo_driver)
+    avl.Factory.set_override_by_type(avl.templates.VanillaMonitor, fifo_monitor)
+    avl.Factory.set_override_by_type(avl.SequenceItem, fifo_item)
+    avl.Factory.set_override_by_type(avl.templates.VanillaModel, fifo_model)
     # the agent and scoreboard are both using the Vanilla classes
 
     e = fifo_env('fifo_env', None)
