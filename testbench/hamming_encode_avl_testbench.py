@@ -11,7 +11,7 @@ import numpy as np
 from hamming_funcs import * 
 
 
-class hamming_encode_item(avl.Sequence_Item):
+class hamming_encode_item(avl.SequenceItem):
     def __init__(self, name, parent_sequence):
         super().__init__(name, parent_sequence)
 
@@ -29,7 +29,7 @@ class hamming_encode_item(avl.Sequence_Item):
         super().randomize()
 
 # Driver is simple, takes randomised inputs from sequencer and writes to the DUT
-class hamming_encode_driver(avl.templates.Vanilla_Driver):
+class hamming_encode_driver(avl.templates.VanillaDriver):
     async def reset(self):
         self.hdl.data_in_i.value = 0
 
@@ -51,7 +51,7 @@ class hamming_encode_driver(avl.templates.Vanilla_Driver):
             item.set_event("done")
 
 # Monitor also simply reads the dut and exports the trasaction on each clock edge
-class hamming_encode_monitor(avl.templates.Vanilla_Monitor):
+class hamming_encode_monitor(avl.templates.VanillaMonitor):
     def __init__(self, name, parent):
         super().__init__(name, parent)
 
@@ -70,7 +70,7 @@ class hamming_encode_monitor(avl.templates.Vanilla_Monitor):
  
             self.item_export.write(item)
 
-class hamming_encode_model(avl.templates.Vanilla_Model):
+class hamming_encode_model(avl.templates.VanillaModel):
     def __init__(self, name, parent):
        super().__init__(name, parent)
 
@@ -116,7 +116,7 @@ class hamming_encode_model(avl.templates.Vanilla_Model):
 
 # this sets up common signals such as clock and reset and 
 # instantates N-agents (as determied by factory settings)
-class hamming_encode_env(avl.templates.Vanilla_Env):
+class hamming_encode_env(avl.templates.VanillaEnv):
     def __init__(self, name, parent):
         super().__init__(name, parent)
   
@@ -139,10 +139,10 @@ async def test(dut):
     # vanilla.py references classes which may be overridden therefore when for example you
     # want to make some override to the monitor class, you do not need to re-write the agent class
     # to include this modified monitor. 
-    avl.Factory.set_override_by_type(avl.templates.Vanilla_Driver, hamming_encode_driver)
-    avl.Factory.set_override_by_type(avl.templates.Vanilla_Monitor, hamming_encode_monitor)
-    avl.Factory.set_override_by_type(avl.Sequence_Item, hamming_encode_item)
-    avl.Factory.set_override_by_type(avl.templates.Vanilla_Model, hamming_encode_model)
+    avl.Factory.set_override_by_type(avl.templates.VanillaDriver, hamming_encode_driver)
+    avl.Factory.set_override_by_type(avl.templates.VanillaMonitor, hamming_encode_monitor)
+    avl.Factory.set_override_by_type(avl.SequenceItem, hamming_encode_item)
+    avl.Factory.set_override_by_type(avl.templates.VanillaModel, hamming_encode_model)
     # the agent and scoreboard are both using the Vanilla classes
 
     e = hamming_encode_env('hamming_encode_env', None)

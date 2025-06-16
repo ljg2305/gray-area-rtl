@@ -7,14 +7,14 @@ import random
 from z3 import  Implies
 
 
-class serdes_item(avl.Sequence_Item):
+class serdes_item(avl.SequenceItem):
     def __init__(self, name, parent_sequence):
         super().__init__(name, parent_sequence)
 
         # Inputs : Randomised 
         # set parallel in to 0 if not valid to make waves more readable
         self.parallel_in     = avl.Uint8("parallel_in", 0, fmt=str)
-        self.valid_in = avl.Logic("valid_in", 0, fmt=str, width=1, signed=False)
+        self.valid_in = avl.Logic("valid_in", 0, fmt=str, width=1)
         # This circuit can only take an average of one packet every 8 cycles.
         # The fifo enables the ability to buffer the input. 
         # Here we are constraining the random value of valid to occour just above 1 in 8 cycles therefore will eventually fill up the fifo and drop packets.
@@ -24,16 +24,16 @@ class serdes_item(avl.Sequence_Item):
 
         # Outputs : for observation/prediction
         self.parallel_out    = avl.Uint8("parallel_out", 0, fmt=str,auto_random=False)
-        self.ready_out  = avl.Logic("ready_out", 0, fmt=str,auto_random=False, width=1, signed=False)
-        self.valid_out  = avl.Logic("valid_out", 0, fmt=str,auto_random=False, width=1, signed=False)
-        self.full  = avl.Logic("fifo_full", 0, fmt=str,auto_random=False, width=1, signed=False)
-        self.empty  = avl.Logic("fifo_empty", 0, fmt=str,auto_random=False, width=1, signed=False)
+        self.ready_out  = avl.Logic("ready_out", 0, fmt=str,auto_random=False, width=1)
+        self.valid_out  = avl.Logic("valid_out", 0, fmt=str,auto_random=False, width=1)
+        self.full  = avl.Logic("fifo_full", 0, fmt=str,auto_random=False, width=1)
+        self.empty  = avl.Logic("fifo_empty", 0, fmt=str,auto_random=False, width=1)
 
     def randomize(self):
         super().randomize()
 
 # Driver is simple, takes randomised inputs from sequencer and writes to the DUT
-class serdes_driver(avl.templates.Vanilla_Driver):
+class serdes_driver(avl.templates.VanillaDriver):
     async def reset(self):
         self.hdl.parallel_in.value = 0
         self.hdl.valid_in.value = 0
@@ -57,7 +57,7 @@ class serdes_driver(avl.templates.Vanilla_Driver):
             item.set_event("done")
 
 # Monitor also simply reads the dut and exports the trasaction on each clock edge
-class serdes_monitor(avl.templates.Vanilla_Monitor):
+class serdes_monitor(avl.templates.VanillaMonitor):
     def __init__(self, name, parent):
         super().__init__(name, parent)
 
@@ -92,7 +92,7 @@ class serdes_monitor(avl.templates.Vanilla_Monitor):
     async def report_phase(self):
         cocotb.log.warning(self.cg.report(full=True))
 
-class serdes_model(avl.templates.Vanilla_Model):
+class serdes_model(avl.templates.VanillaModel):
     def __init__(self, name, parent):
        super().__init__(name, parent)
        self.fifo = avl.Fifo(18)
@@ -150,7 +150,7 @@ class serdes_model(avl.templates.Vanilla_Model):
 
 # this sets up common signals such as clock and reset and 
 # instantates N-agents (as determied by factory settings)
-class serdes_env(avl.templates.Vanilla_Env):
+class serdes_env(avl.templates.VanillaEnv):
     def __init__(self, name, parent):
         super().__init__(name, parent)
   
@@ -171,10 +171,10 @@ async def test(dut):
     # vanilla.py references classes which may be overridden therefore when for example you
     # want to make some override to the monitor class, you do not need to re-write the agent class
     # to include this modified monitor. 
-    avl.Factory.set_override_by_type(avl.templates.Vanilla_Driver, serdes_driver)
-    avl.Factory.set_override_by_type(avl.templates.Vanilla_Monitor, serdes_monitor)
-    avl.Factory.set_override_by_type(avl.Sequence_Item, serdes_item)
-    avl.Factory.set_override_by_type(avl.templates.Vanilla_Model, serdes_model)
+    avl.Factory.set_override_by_type(avl.templates.VanillaDriver, serdes_driver)
+    avl.Factory.set_override_by_type(avl.templates.VanillaMonitor, serdes_monitor)
+    avl.Factory.set_override_by_type(avl.SequenceItem, serdes_item)
+    avl.Factory.set_override_by_type(avl.templates.VanillaModel, serdes_model)
     # the agent and scoreboard are both using the Vanilla classes
 
     e = serdes_env('serdes_env', None)
