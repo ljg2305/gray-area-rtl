@@ -1,25 +1,25 @@
-module serializer #( 
-    DATA_WIDTH = 8
+module serializer #(
+    int DATA_WIDTH = 8
     ) (
     input logic clk,
     input logic rst_n,
-    output logic serial_out, 
-    output logic enable, 
-    output logic start, 
+    output logic serial_out,
+    output logic enable,
+    output logic start,
     input logic [DATA_WIDTH-1:0] parallel_in,
     input logic valid,
     output logic ready
-    ); 
+    );
 
     parameter COUNTER_WIDTH = $clog2(DATA_WIDTH);
     logic [DATA_WIDTH-1:0] parallel_regs;
     logic [COUNTER_WIDTH:0] bit_counter;
-    logic in_packet; 
+    logic in_packet;
 
     assign ready = !in_packet || in_packet && (bit_counter >= DATA_WIDTH - 2) && !valid;
 
 
-    always_ff @( posedge clk ) begin 
+    always_ff @( posedge clk ) begin
         if (!rst_n) begin
             parallel_regs <= '0;
             in_packet <= 1'b0;
@@ -27,7 +27,7 @@ module serializer #(
             start <= 1'b0;
             enable <= 1'b0;
             bit_counter <= '0;
-        end else begin 
+        end else begin
             start <= 1'b0;
             enable <= 1'b0;
             serial_out <= 1'b0;
@@ -38,7 +38,7 @@ module serializer #(
                 start <= 1'b1;
                 enable <= 1'b1;
                 bit_counter <= '0;
-            end else if (in_packet) begin 
+            end else if (in_packet) begin
                 if (bit_counter == DATA_WIDTH - 1) begin
                     in_packet <= 1'b0;
                     bit_counter <= '0;
@@ -49,11 +49,11 @@ module serializer #(
                     parallel_regs <= {parallel_regs[DATA_WIDTH-2:0],1'b0};
                     serial_out <= parallel_regs[DATA_WIDTH-1];
                 end
-            end 
-        end 
+            end
+        end
     end
 
-//dump vcd 
+//dump vcd
 
 initial begin
     $dumpfile("dump.vcd");
