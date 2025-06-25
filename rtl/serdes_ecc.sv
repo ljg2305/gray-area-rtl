@@ -1,4 +1,4 @@
-module serdes_fifo #( 
+module serdes_ecc #( 
     DATA_WIDTH = 8
     ) (
         input  logic clk_i,
@@ -16,7 +16,7 @@ module serdes_fifo #(
         output logic fifo_empty_o
     ); 
 
-    serdes #(.FIFO_DEPTH(16),.DATA_WIDTH(DATA_WIDTH)) serdes_inst 
+    serdes #(.FIFO_DEPTH(16),.DATA_WIDTH(DATA_WIDTH),.HAS_ECC(1)) serdes_inst 
         (
             .clk_i,
             .rst_n_i,
@@ -36,7 +36,7 @@ module serdes_fifo #(
 // dump vcd 
 initial begin
   $dumpfile("dump.vcd");
-  $dumpvars(1,serdes_fifo);
+  $dumpvars(1,serdes_ecc);
 end
 
 `endif //synthesis

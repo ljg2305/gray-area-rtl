@@ -4,6 +4,7 @@ module hamming_pad #(
    int DATA_WIDTH = 32
 ) (
     input  logic [DATA_WIDTH-1:0]   data_in_i,
+    input  logic [CODE_BITS-1:0]    pad_bits_i, 
     output logic [CODED_WIDTH-1:0] data_out_o
 );
 
@@ -16,7 +17,7 @@ module hamming_pad #(
     assign data_in_padded = {{(PADDED_INPUT_WIDTH-DATA_WIDTH){1'b0}},data_in_i};
 
 
-    assign packed_input[0] = 1'b0;
+    assign packed_input[0] = pad_bits_i[0];
     genvar i;
     generate
     for (i = 0; i < ADDR_WIDTH; i++) begin
@@ -27,7 +28,7 @@ module hamming_pad #(
         localparam int packed_offset = current_pow + 1;
 
         // insert placeholder 0 for parity bits
-        assign packed_input[current_pow] = 1'b0;
+        assign packed_input[current_pow] = pad_bits_i[i+1];
 
         if (width  > 0)
             assign packed_input[packed_offset +: width] = data_in_padded[data_offset +: width];
