@@ -1,5 +1,3 @@
-// TODO: add a ready flag to the serializer to be able to request data from the fifo
-
 module serializer #( 
     DATA_WIDTH = 8
     ) (
