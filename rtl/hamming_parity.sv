@@ -7,8 +7,8 @@ module hamming_parity #(
   input  logic                   rst_n_i,
   input  logic [CODED_WIDTH-1:0] data_in_i,
   // raw parity outputs for decoding
-  output logic [ADDR_WIDTH-1:0]  parity_bits_o,
   output logic                   extended_parity_o,
+  output logic [ADDR_WIDTH-1:0]  parity_bits_o,
   // coded output back fills parity bits into input for encoding
   output logic [CODED_WIDTH-1:0] coded_output_o,
   output logic                   extended_coded_parity_o

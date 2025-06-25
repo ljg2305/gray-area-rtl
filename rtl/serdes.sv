@@ -1,6 +1,7 @@
 module serdes #( 
-    DATA_WIDTH = 8,
-    FIFO_DEPTH = 0
+    int DATA_WIDTH = 8,
+    int FIFO_DEPTH = 0, 
+    logic HAS_ECC = 0
     ) (
         input  logic clk,
         input  logic rst_n,
@@ -61,7 +62,7 @@ module serdes #(
         end 
     endgenerate
 
-    serializer #(.DATA_WIDTH(DATA_WIDTH)) serializer_inst
+    serializer #(.DATA_WIDTH(DATA_WIDTH),.HAS_ECC(HAS_ECC)) serializer_inst
         (
             .clk(clk),
             .rst_n(rst_n),
