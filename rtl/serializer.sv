@@ -31,7 +31,7 @@ module serializer #(
             start_o <= 1'b0;
             enable_o <= 1'b0;
             serial_out_o <= 1'b0;
-            if (valid_in_i_in_i) begin
+            if (valid_in_i) begin
                 parallel_regs <= {parallel_in_i[DATA_WIDTH-2:0],1'b0};
                 in_packet <= 1'b1;
                 serial_out_o <= parallel_in_i[DATA_WIDTH-1];
