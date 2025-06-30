@@ -80,7 +80,7 @@ module serializer #(
                     in_packet <= 1'b0;
                     bit_counter <= '0;
                 end else begin
-                  
+
                     enable_o <= 1'b1;
                     bit_counter <= bit_counter + 1;
                     if (int'(bit_counter) < DATA_WIDTH - 1  ) begin

@@ -24,7 +24,7 @@ module deserializer #(
     logic [COUNTER_WIDTH:0] bit_counter;
     logic in_packet;
     logic valid;
-    logic parallel_out;
+    logic [DATA_WIDTH-1:0] parallel_out;
 
     assign parallel_out = valid ? parallel_regs_ecc : '0;
 
@@ -35,7 +35,7 @@ module deserializer #(
             in_packet <= '0;
             valid <= '0;
         end else begin
-          
+
             if (enable_i) begin
                 parallel_regs <= {parallel_regs[PARALLEL_DATA_WIDTH-2:0],serial_in_i};
             end
@@ -50,7 +50,7 @@ module deserializer #(
             end
 
             if (start_i) begin
-                in_packet <= 1'b1;    
+                in_packet <= 1'b1;
             end else if (in_packet) begin
                 if (int'(bit_counter) == PARALLEL_DATA_WIDTH - 1) begin
                     in_packet <= '0;
@@ -65,7 +65,7 @@ module deserializer #(
 
 
     generate
-        if (HAS_ECC == 1) begin
+        if (HAS_ECC == 1) begin : ECC
 
             hamming_pad #(.DATA_WIDTH(DATA_WIDTH)) hamming_pad_inst (
                 .data_in_i(parallel_regs[PARALLEL_DATA_WIDTH-1:PARALLEL_DATA_WIDTH-DATA_WIDTH]),
@@ -83,7 +83,7 @@ module deserializer #(
             .fault_location_o(fault_location_o),
             .num_errors_o(num_errors_o)
             );
-           
+
             // FLOP outputs
             always_ff @( posedge clk_i ) begin
                 if (!rst_n_i) begin
@@ -94,7 +94,7 @@ module deserializer #(
                     valid_o <= valid;
                 end
             end
-          
+
         end else begin
             assign parallel_regs_ecc = parallel_regs;
             assign parallel_out_o = parallel_out;

@@ -12,7 +12,7 @@ module serdes #(
 
         output  logic [DATA_WIDTH-1:0] parallel_out_o,
         output  logic valid_out_o,
-   
+
         // FIFO flags
         output logic fifo_full_o,
         output logic fifo_empty_o
@@ -27,8 +27,8 @@ module serdes #(
     logic [DATA_WIDTH-1:0] data_to_serializer;
     logic valid_to_serializer;
     logic ready_from_serializer,ready_to_fifo, previous_ready;
-    generate
-        if (FIFO_DEPTH == 0) begin
+    generate  
+        if (FIFO_DEPTH == 0) begin : FIFO
             // bypass fifo
             // hooking up the fifo could change the IO behavour
             assign data_to_serializer = parallel_in_i;
@@ -50,7 +50,7 @@ module serdes #(
                     .read_valid(valid_to_serializer),
                     .read_ready(ready_to_fifo)
                 );
-           
+
             pulse_gen pulse_gen_inst (
                 .clk(clk_i),
                 .rst_n(rst_n_i),
@@ -61,7 +61,7 @@ module serdes #(
 
 
         end
-    endgenerate
+    endgenerate //: FIFO
 
     serializer #(.DATA_WIDTH(DATA_WIDTH),.HAS_ECC(HAS_ECC)) serializer_inst
         (
