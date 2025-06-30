@@ -16,8 +16,8 @@ module serializer #(
 
     `include "hamming_defines.svh"
 
-    parameter PARALLEL_DATA_WIDTH = (HAS_ECC == 0) ? DATA_WIDTH : CODED_WIDTH;
-    parameter COUNTER_WIDTH = $clog2(PARALLEL_DATA_WIDTH);
+    parameter int PARALLEL_DATA_WIDTH = (HAS_ECC == 0) ? DATA_WIDTH : CODED_WIDTH;
+    parameter int COUNTER_WIDTH = $clog2(PARALLEL_DATA_WIDTH);
 
     logic [CODE_BITS-1:0] parity_data;
     logic [CODE_BITS-1:0] parity_regs;
@@ -29,11 +29,12 @@ module serializer #(
 
 
 
-    assign ready_o = !in_packet || in_packet && (int'(bit_counter) >= PARALLEL_DATA_WIDTH - 2) && !valid_in_i;
+    assign ready_o = !in_packet || in_packet && 
+        (int'(bit_counter) >= PARALLEL_DATA_WIDTH - 2) && !valid_in_i;
 
 
     generate
-        if (HAS_ECC == 1) begin
+        if (HAS_ECC == 1) begin : g_hamming_encode
             hamming_encode #( .DATA_WIDTH(DATA_WIDTH)) hamming_encode_inst (
                 .clk_i(clk_i),
                 .rst_n_i(rst_n_i),

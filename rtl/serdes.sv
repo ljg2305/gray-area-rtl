@@ -27,8 +27,8 @@ module serdes #(
     logic [DATA_WIDTH-1:0] data_to_serializer;
     logic valid_to_serializer;
     logic ready_from_serializer,ready_to_fifo, previous_ready;
-    generate  
-        if (FIFO_DEPTH == 0) begin : FIFO
+    generate
+        if (FIFO_DEPTH == 0) begin : g_bypass_fifo
             // bypass fifo
             // hooking up the fifo could change the IO behavour
             assign data_to_serializer = parallel_in_i;
@@ -36,32 +36,32 @@ module serdes #(
             assign ready_out_o = ready_from_serializer;
             assign fifo_full_o = 1'b0;
             assign fifo_empty_o = 1'b0;
-        end else begin
+        end else begin : g_fifo
             fifo #(.DATA_WIDTH(DATA_WIDTH),.FIFO_DEPTH(FIFO_DEPTH)) fifo_inst
                 (
-                    .clk(clk_i),
-                    .rst_n(rst_n_i),
-                    .full(fifo_full_o),
-                    .empty(fifo_empty_o),
-                    .data_in(parallel_in_i),
-                    .data_out(data_to_serializer),
-                    .write_valid(valid_in_i),
-                    .write_ready(ready_out_o),
-                    .read_valid(valid_to_serializer),
-                    .read_ready(ready_to_fifo)
+                    .clk_i(clk_i),
+                    .rst_n_i(rst_n_i),
+                    .full_o(fifo_full_o),
+                    .empty_o(fifo_empty_o),
+                    .data_in_i(parallel_in_i),
+                    .data_out_o(data_to_serializer),
+                    .write_valid_i(valid_in_i),
+                    .write_ready_o(ready_out_o),
+                    .read_valid_o(valid_to_serializer),
+                    .read_ready_i(ready_to_fifo)
                 );
 
             pulse_gen pulse_gen_inst (
-                .clk(clk_i),
-                .rst_n(rst_n_i),
-                .signal_in(ready_from_serializer),
-                .hold(fifo_empty_o),
-                .pulse_out(ready_to_fifo)
+                .clk_i(clk_i),
+                .rst_n_i(rst_n_i),
+                .signal_in_i(ready_from_serializer),
+                .hold_i(fifo_empty_o),
+                .pulse_out_o(ready_to_fifo)
             );
 
 
         end
-    endgenerate //: FIFO
+    endgenerate
 
     serializer #(.DATA_WIDTH(DATA_WIDTH),.HAS_ECC(HAS_ECC)) serializer_inst
         (

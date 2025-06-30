@@ -15,8 +15,8 @@ module deserializer #(
 
     `include "hamming_defines.svh"
 
-    parameter PARALLEL_DATA_WIDTH = (HAS_ECC == 0) ? DATA_WIDTH : CODED_WIDTH;
-    parameter COUNTER_WIDTH = $clog2(PARALLEL_DATA_WIDTH);
+    parameter int PARALLEL_DATA_WIDTH = (HAS_ECC == 0) ? DATA_WIDTH : CODED_WIDTH;
+    parameter int COUNTER_WIDTH = $clog2(PARALLEL_DATA_WIDTH);
 
     logic [PARALLEL_DATA_WIDTH-1:0] parallel_regs;
     logic [PARALLEL_DATA_WIDTH-1:0] parallel_regs_padded;
@@ -65,7 +65,7 @@ module deserializer #(
 
 
     generate
-        if (HAS_ECC == 1) begin : ECC
+        if (HAS_ECC == 1) begin : g_hamming_decode
 
             hamming_pad #(.DATA_WIDTH(DATA_WIDTH)) hamming_pad_inst (
                 .data_in_i(parallel_regs[PARALLEL_DATA_WIDTH-1:PARALLEL_DATA_WIDTH-DATA_WIDTH]),
@@ -95,7 +95,7 @@ module deserializer #(
                 end
             end
 
-        end else begin
+        end else begin : g_output_logic
             assign parallel_regs_ecc = parallel_regs;
             assign parallel_out_o = parallel_out;
             assign valid_o = valid;
