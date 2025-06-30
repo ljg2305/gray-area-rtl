@@ -30,11 +30,10 @@ always @(posedge clk_i ) begin
     if (!rst_n_i) begin
       valid <= 0;
       data_in_reg <= '0;
-    end
-    else begin
+    end else begin
       valid <= valid_in_i;
       if (valid_in_i) begin
-        data_in_reg <= data_in_i
+        data_in_reg <= data_in_i;
       end
     end
 end
@@ -42,7 +41,7 @@ end
 
 hamming_pad #(.DATA_WIDTH(DATA_WIDTH)) hamming_pad_inst (
   .data_in_i(data_in_reg),
-  .pad_bits_i('0)
+  .pad_bits_i('0),
   .data_out_o(packed_input)
 );
 
@@ -59,6 +58,6 @@ hamming_parity #(.DATA_WIDTH(DATA_WIDTH)) hamming_parity_inst (
 
 assign data_out_o = extended_coded_output;
 assign valid_out_o = valid;
-assign parity_bits_o = {base_parity_bits,extended_parity_bit}
+assign parity_bits_o = {base_parity_bits,extended_parity_bit};
 
 endmodule

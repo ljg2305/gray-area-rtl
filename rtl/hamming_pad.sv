@@ -4,8 +4,8 @@ module hamming_pad #(
    int DATA_WIDTH = 32
 ) (
     input  logic [DATA_WIDTH-1:0]   data_in_i,
-    input  logic [CODE_BITS-1:0]    pad_bits_i, 
-    output logic [CODED_WIDTH-1:0] data_out_o
+    input  logic [CODE_BITS-1:0]    pad_bits_i,
+    output logic [CODED_WIDTH-1:0]  data_out_o
 );
 
     `include "hamming_defines.svh"
