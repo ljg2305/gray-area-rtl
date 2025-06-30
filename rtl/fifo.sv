@@ -1,62 +1,62 @@
-module fifo #( 
-    DATA_WIDTH = 8,
-    FIFO_DEPTH = 16,
-    ADDR_WIDTH = $clog2(FIFO_DEPTH)
+module fifo #(
+    int DATA_WIDTH = 8,
+    int FIFO_DEPTH = 16,
+    int ADDR_WIDTH = $clog2(FIFO_DEPTH)
     ) (
-    input logic clk,
-    input logic rst_n,
-    output logic full,
-    output logic empty, 
-    input  logic [DATA_WIDTH-1:0] data_in, 
-    output logic [DATA_WIDTH-1:0] data_out,
-    
+    input logic clk_i,
+    input logic rst_n_i,
+    output logic full_o,
+    output logic empty_o,
+    input  logic [DATA_WIDTH-1:0] data_in_i,
+    output logic [DATA_WIDTH-1:0] data_out_o,
+
     // Write (Producer -> FIFO)
-    input  logic         write_valid,
-    output logic         write_ready,
+    input  logic         write_valid_i,
+    output logic         write_ready_o,
 
     // Read (FIFO -> Consumer)
-    output logic         read_valid,
-    input  logic         read_ready
-    ); 
+    output logic         read_valid_o,
+    input  logic         read_ready_i
+    );
 
-    logic [ADDR_WIDTH-1:0] rd_ptr, wr_ptr; 
-    logic [ADDR_WIDTH:0] rd_idx, wr_idx; 
+    logic [ADDR_WIDTH-1:0] rd_ptr, wr_ptr;
+    logic [ADDR_WIDTH:0] rd_idx, wr_idx;
     logic [FIFO_DEPTH-1:0] [DATA_WIDTH-1:0] fifo_regs;
-    logic [DATA_WIDTH-1:0] read_data; 
+    logic [DATA_WIDTH-1:0] read_data;
 
     assign rd_ptr = rd_idx[ADDR_WIDTH-1:0];
     assign wr_ptr = wr_idx[ADDR_WIDTH-1:0];
 
-    assign empty = (rd_idx == wr_idx); 
-    //assign read_valid_next = !empty;  
-    assign full  = (wr_ptr == rd_ptr) && (rd_idx[ADDR_WIDTH] != wr_idx[ADDR_WIDTH]);
-    assign write_ready = !full; 
-    assign data_out = read_valid ? read_data : '0;
+    assign empty_o = (rd_idx == wr_idx);
+    //assign read_valid_o_next = !empty_o;
+    assign full_o  = (wr_ptr == rd_ptr) && (rd_idx[ADDR_WIDTH] != wr_idx[ADDR_WIDTH]);
+    assign write_ready_o = !full_o;
+    assign data_out_o = read_valid_o ? read_data : '0;
 
 
-    always_ff @( posedge clk ) begin : pointers
-        if (!rst_n) begin
+    always_ff @( posedge clk_i ) begin : pointers
+        if (!rst_n_i) begin
             wr_idx <= '0;
             rd_idx <= '0;
             fifo_regs <= '0;
             read_data <= '0;
-            read_valid <= '0;
-        end else begin 
-            if (write_valid && write_ready) begin 
-                fifo_regs[wr_ptr] <= data_in;
-                wr_idx <= wr_idx + 1; 
-            end 
-            if (!empty && read_ready) begin 
-                rd_idx <= rd_idx + 1; 
-            end 
-            if (read_ready) begin
+            read_valid_o <= '0;
+        end else begin
+            if (write_valid_i && write_ready_o) begin
+                fifo_regs[wr_ptr] <= data_in_i;
+                wr_idx <= wr_idx + 1;
+            end
+            if (!empty_o && read_ready_i) begin
+                rd_idx <= rd_idx + 1;
+            end
+            if (read_ready_i) begin
                 read_data <= fifo_regs[rd_ptr];
             end
-            read_valid <= !empty && read_ready;
-        end 
+            read_valid_o <= !empty_o && read_ready_i;
+        end
     end
 
-`ifndef synthesis 
+`ifndef synthesis
 // assertions
 // iverilog does not support concurent assertions
 initial begin
@@ -71,15 +71,15 @@ initial begin
     end
 end
 
-assert property (@(posedge clk) !(full && empty));
+assert property (@(posedge clk_i) !(full_o && empty_o));
 
-always @(posedge clk) begin
-    if (full & write_valid) begin 
-        $warning("write attempted to fifo when fifo is full");
-    end 
+always @(posedge clk_i) begin
+    if (full_o & write_valid_i) begin
+        $warning("write attempted to fifo when fifo is full_o");
+    end
 end
 
-// dump vcd 
+// dump vcd
  initial begin
      $dumpfile("dump.vcd");
      $dumpvars(1,fifo);
