@@ -28,7 +28,6 @@ module serializer #(
     logic in_packet;
 
 
-    logic serial_from_parity;
 
     assign ready_o = !in_packet || in_packet && (int'(bit_counter) >= PARALLEL_DATA_WIDTH - 2) && !valid_in_i;
 
@@ -69,7 +68,6 @@ module serializer #(
                 start_o <= 1'b1;
                 enable_o <= 1'b1;
                 bit_counter <= '0;
-                serial_from_parity <= '0;
             end else if (in_packet) begin
 
                 if (HAS_ECC) begin
@@ -88,13 +86,9 @@ module serializer #(
                     if (int'(bit_counter) < DATA_WIDTH - 1  ) begin
                         parallel_regs <= {parallel_regs[DATA_WIDTH-2:0],1'b0};
                         serial_out_o <= parallel_regs[DATA_WIDTH-1];
-                        serial_from_parity <= 0;
                     end else if (HAS_ECC) begin
                         parity_regs <= {parity_regs[CODE_BITS-2:0],1'b0};
                         serial_out_o <= parity_regs[CODE_BITS-1];
-                        serial_from_parity <= 1;
-                        //parity_regs <= {1'b0,parity_regs[CODE_BITS-1:1]};
-                        //serial_out_o <= 0;
                     end
                 end
             end

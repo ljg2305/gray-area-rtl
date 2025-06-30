@@ -23,15 +23,17 @@ module deserializer #(
     logic [DATA_WIDTH-1:0] parallel_regs_ecc;
     logic [COUNTER_WIDTH:0] bit_counter;
     logic in_packet;
+    logic valid;
+    logic parallel_out;
 
-    assign parallel_out_o = valid_o ? parallel_regs_ecc : '0;
+    assign parallel_out = valid ? parallel_regs_ecc : '0;
 
     always_ff @( posedge clk_i ) begin
         if (!rst_n_i) begin
             parallel_regs <= '0;
             bit_counter <= '0;
             in_packet <= '0;
-            valid_o <= '0;
+            valid <= '0;
         end else begin
            
             if (enable_i) begin
@@ -55,7 +57,7 @@ module deserializer #(
                 end
             end
 
-            valid_o <= (in_packet && int'(bit_counter) == PARALLEL_DATA_WIDTH - 1  && enable_i && !start_i);
+            valid <= (in_packet && int'(bit_counter) == PARALLEL_DATA_WIDTH - 1  && enable_i && !start_i);
 
 
         end
@@ -81,9 +83,22 @@ module deserializer #(
             .fault_location_o(fault_location_o),
             .num_errors_o(num_errors_o)
             );
-
+            
+            // FLOP outputs 
+            always_ff @( posedge clk_i ) begin
+                if (!rst_n_i) begin
+                    valid_o <= '0;
+                    parallel_out_o <= '0;
+                end else begin
+                    parallel_out_o <= parallel_out;
+                    valid_o <= valid; 
+                end
+            end
+           
         end else begin
             assign parallel_regs_ecc = parallel_regs;
+            assign parallel_out_o = parallel_out;
+            assign valid_o = valid;
         end
     endgenerate
 
