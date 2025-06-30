@@ -1,7 +1,7 @@
 module serdes #(
     int DATA_WIDTH = 8,
     int FIFO_DEPTH = 0,
-    logic HAS_ECC = 0
+    bit HAS_ECC    = 0
     ) (
         input  logic clk_i,
         input  logic rst_n_i,

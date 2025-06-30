@@ -1,5 +1,5 @@
 module serdes_ecc #(
-    DATA_WIDTH = 8
+    int DATA_WIDTH = 8
     ) (
         input  logic clk_i,
         input  logic rst_n_i,

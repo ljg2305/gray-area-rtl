@@ -1,7 +1,7 @@
 import gray_area_package::*;
 
 module hamming_encode #(
-    DATA_WIDTH = 32
+  int DATA_WIDTH = 32
 ) (
   input  logic                    clk_i,
   input  logic                    rst_n_i,

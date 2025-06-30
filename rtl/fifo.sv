@@ -1,7 +1,7 @@
 module fifo #( 
-    DATA_WIDTH = 8,
-    FIFO_DEPTH = 16,
-    ADDR_WIDTH = $clog2(FIFO_DEPTH)
+    int DATA_WIDTH = 8,
+    int FIFO_DEPTH = 16,
+    int ADDR_WIDTH = $clog2(FIFO_DEPTH)
     ) (
     input logic clk,
     input logic rst_n,

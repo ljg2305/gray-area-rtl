@@ -1,8 +1,8 @@
 import gray_area_package::*;
 
 module serializer #(
-    DATA_WIDTH = 8,
-    HAS_ECC = 0
+    int DATA_WIDTH = 8,
+    bit HAS_ECC    = 0
     ) (
     input  logic                    clk_i,
     input  logic                    rst_n_i,
