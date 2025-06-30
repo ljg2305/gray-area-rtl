@@ -57,7 +57,7 @@ module deserializer #(
                 end
             end
 
-            valid <= (in_packet && int'(bit_counter) == PARALLEL_DATA_WIDTH - 1  && 
+            valid <= (in_packet && int'(bit_counter) == PARALLEL_DATA_WIDTH - 1  &&
                         enable_i && !start_i);
 
 
