@@ -35,13 +35,13 @@ module deserializer #(
             in_packet <= '0;
             valid <= '0;
         end else begin
-           
+          
             if (enable_i) begin
                 parallel_regs <= {parallel_regs[PARALLEL_DATA_WIDTH-2:0],serial_in_i};
             end
 
             if (start_i) begin
-                if (enable_i) 
+                if (enable_i)
                     bit_counter <= 1;
                 else
                     bit_counter <= '0;
@@ -50,7 +50,7 @@ module deserializer #(
             end
 
             if (start_i) begin
-                in_packet <= 1'b1;     
+                in_packet <= 1'b1;    
             end else if (in_packet) begin
                 if (int'(bit_counter) == PARALLEL_DATA_WIDTH - 1) begin
                     in_packet <= '0;
@@ -83,18 +83,18 @@ module deserializer #(
             .fault_location_o(fault_location_o),
             .num_errors_o(num_errors_o)
             );
-            
-            // FLOP outputs 
+           
+            // FLOP outputs
             always_ff @( posedge clk_i ) begin
                 if (!rst_n_i) begin
                     valid_o <= '0;
                     parallel_out_o <= '0;
                 end else begin
                     parallel_out_o <= parallel_out;
-                    valid_o <= valid; 
+                    valid_o <= valid;
                 end
             end
-           
+          
         end else begin
             assign parallel_regs_ecc = parallel_regs;
             assign parallel_out_o = parallel_out;
