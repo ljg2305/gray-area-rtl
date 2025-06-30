@@ -29,7 +29,7 @@ module serializer #(
 
 
 
-    assign ready_o = !in_packet || in_packet && 
+    assign ready_o = !in_packet || in_packet &&
         (int'(bit_counter) >= PARALLEL_DATA_WIDTH - 2) && !valid_in_i;
 
 

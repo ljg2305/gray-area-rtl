@@ -38,6 +38,6 @@ initial begin
     $dumpvars(1,pulse_gen);
 end
 
-`endif
+`endif  // synthesis 
 
 endmodule
