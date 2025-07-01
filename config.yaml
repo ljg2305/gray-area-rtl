@@ -7,11 +7,14 @@ global:
     - rtl/pulse_gen.sv
     - rtl/serdes.sv 
     - rtl/serdes_fifo.sv 
+    - rtl/serdes_ecc.sv 
     - rtl/serializer.sv 
     - rtl/deserializer.sv 
     - rtl/hamming_pad.sv
     - rtl/hamming_encode.sv
     - rtl/hamming_decode.sv
+    - rtl/hamming_parity.sv
+    - rtl/sniffer.sv
   verilog_include_dirs:
     - rtl/
   testbench_paths:

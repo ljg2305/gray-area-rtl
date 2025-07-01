@@ -103,11 +103,14 @@ module deserializer #(
         end
     endgenerate
 
+`ifndef synthesis
 //dump vcd
 
 initial begin
     $dumpfile("dump.vcd");
     $dumpvars(1,deserializer);
 end
+
+`endif //synthesis
 
 endmodule

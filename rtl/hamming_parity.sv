@@ -24,18 +24,18 @@ logic [CODED_WIDTH-1:0] coded_output;
 
 always_comb begin
 
-  for (int i = 0; i < CODED_WIDTH; i++) begin
+  for (int i = 0; i < CODED_WIDTH; i = i + 1) begin
       parity_index[i] = i[ADDR_WIDTH-1:0];
       parity_input[i] = {ADDR_WIDTH{data_in_i[i]}} & parity_index[i];
   end
 
   parity_bits_o = {ADDR_WIDTH{1'b0}};
-  for (int i = 0; i < CODED_WIDTH; i++) begin
+  for (int i = 0; i < CODED_WIDTH; i = i + 1) begin
     parity_bits_o ^= parity_input[i];  // bitwise XOR across each value
   end
 
   coded_output = data_in_i;
-  for (int i = 0; i < ADDR_WIDTH; i++) begin
+  for (int i = 0; i < ADDR_WIDTH; i = i + 1) begin
     coded_output[2**i] = parity_bits_o[i];
   end
 

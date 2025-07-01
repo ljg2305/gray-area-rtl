@@ -96,11 +96,17 @@ module serializer #(
         end
     end
 
-//dump vcd
 
+`ifndef synthesis
+// assertions
+
+// dump vcd
 initial begin
     $dumpfile("dump.vcd");
     $dumpvars(1,serializer);
 end
+
+`endif //synthesis
+
 
 endmodule
