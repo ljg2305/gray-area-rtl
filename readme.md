@@ -89,7 +89,7 @@ Yes
 
 ### Sniffer/Corruptor:
 #### Description:
-To add some flavour to the SerDes we can put some sort of packet sniffer on the wire in the middle. This could look out for a specific value. When this value is found we can block the packet, nullify the packet or corrupt the packet. Depending on what this does the latency through this module would vary. For the purpose of the CRC module we are going to corrupt the packet as this will act as a verification tool. As to not affect existing testbenches this is going to be included based on a module parameter. 
+This module exists for fun/testing. To add some flavour to the SerDes we can put some sort of packet sniffer on the wire in the middle. This could look out for a specific value. When this value is found we can block the packet, nullify the packet or corrupt the packet. Depending on what this does the latency through this module would vary. For the purpose of the CRC module we are going to corrupt the packet as this will act as a verification tool. As to not affect existing testbenches this is going to be included based on a module parameter. 
 #### Imlemetation Notes: 
 #### Complete: 
 No
@@ -103,7 +103,7 @@ But in interest of interleaving packets, I am going to do a 32 bit packet but sp
 #### Specification: 
 #### Imlemetation Notes: 
 #### Complete: 
-No
+Yes
 
 ### ECC Integration:
 #### Description:
@@ -112,7 +112,7 @@ Need to work out how best to do this in interest of PPA.
 #### Specification: 
 #### Imlemetation Notes: 
 #### Complete: 
-No
+Yes
 
 ### Register Interface: 
 
@@ -129,7 +129,8 @@ No
     Doing something like this would become a lot more complicated if you were to have a passthrough fifo. 
     Alternatively there is the option of hiding the encoding in serialisation. This would mean that you would not be able to send the parity bits interleaved as they should be, but would have to send them at the end and re-package before error checking. 
     This would work along side a passthrough fifo. 
-
+### Serial Protocol: 
+    The serial protocol being used in this project is very basic with a SOP, valid and data signals. It would be interesting to have used a standardised protocol which sends clock and data together to be able to have two clock domains and using a CDC to sync the recived data into the deserialiser. This sort of protocol tends to have SOP, headers (data length ect), data, EOP. Currently the packet length is hard coded. Having a protocol with clock and data would also make more sense with the sniffer module as this realistically would not live within the same system. 
 
 
 ## Authors
