@@ -31,7 +31,7 @@ module serdes #(
     logic serial_from_serializer, serial_to_deserializer;
     logic enable_from_serializer, enable_to_deserializer;
     logic start_from_serializer, start_to_deserializer;
-    
+
     generate
         if (FIFO_DEPTH == 0) begin : g_bypass_fifo
             // bypass fifo
@@ -84,7 +84,7 @@ module serdes #(
     generate
         if (HAS_SNIFFER) begin : g_sniffer
 
-            sniffer siffer_inst 
+            sniffer siffer_inst
                 (
                     .clk_i(clk_i),
                     .rst_n_i(rst_n_i),
@@ -102,7 +102,7 @@ module serdes #(
             assign enable_to_deserializer = enable_from_serializer;
             assign start_to_deserializer  = start_from_serializer;
 
-        end 
+        end
     endgenerate
 
 
