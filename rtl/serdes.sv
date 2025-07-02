@@ -1,7 +1,8 @@
 module serdes #(
-    int DATA_WIDTH = 8,
-    int FIFO_DEPTH = 0,
-    bit HAS_ECC    = 0
+    int DATA_WIDTH  = 8,
+    int FIFO_DEPTH  = 0,
+    bit HAS_ECC     = 0,
+    bit HAS_SNIFFER = 0
     ) (
         input  logic clk_i,
         input  logic rst_n_i,
@@ -27,6 +28,10 @@ module serdes #(
     logic [DATA_WIDTH-1:0] data_to_serializer;
     logic valid_to_serializer;
     logic ready_from_serializer,ready_to_fifo, previous_ready;
+    logic serial_from_serializer, serial_to_deserializer;
+    logic enable_from_serializer, enable_to_deserializer;
+    logic start_from_serializer, start_to_deserializer;
+
     generate
         if (FIFO_DEPTH == 0) begin : g_bypass_fifo
             // bypass fifo
@@ -67,7 +72,7 @@ module serdes #(
         (
             .clk_i(clk_i),
             .rst_n_i(rst_n_i),
-            .serial_out_o(serial_out),
+            .serial_out_o(serial_from_serializer),
             .enable_o(enable),
             .start_o(start),
             .parallel_in_i(data_to_serializer),
@@ -76,11 +81,36 @@ module serdes #(
         );
 
 
+    generate
+        if (HAS_SNIFFER) begin : g_sniffer
+
+            sniffer siffer_inst
+                (
+                    .clk_i(clk_i),
+                    .rst_n_i(rst_n_i),
+                    .serial_in_i(serial_from_serializer),
+                    .enable_i(enable_from_serializer),
+                    .start_i(start_from_serializer),
+                    .serial_out_o(serial_to_deserializer),
+                    .enable_o(enable_to_deserializer),
+                    .start_o(start_to_deserializer)
+                );
+
+        end else begin : g_no_sniffer
+
+            assign serial_to_deserializer = serial_from_serializer;
+            assign enable_to_deserializer = enable_from_serializer;
+            assign start_to_deserializer  = start_from_serializer;
+
+        end
+    endgenerate
+
+
     deserializer #(.DATA_WIDTH(DATA_WIDTH),.HAS_ECC(HAS_ECC)) deserializer_inst
         (
             .clk_i(clk_i),
             .rst_n_i(rst_n_i),
-            .serial_in_i(serial_out),
+            .serial_in_i(serial_to_deserializer),
             .enable_i(enable),
             .start_i(start),
             .parallel_out_o(parallel_out_o),
@@ -89,11 +119,14 @@ module serdes #(
             .num_errors_o()
         );
 
+`ifndef synthesis
 //dump vcd
 
 initial begin
     $dumpfile("dump.vcd");
     $dumpvars(1,serdes);
 end
+
+`endif  // synthesis
 
 endmodule

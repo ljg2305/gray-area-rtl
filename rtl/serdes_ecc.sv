@@ -17,7 +17,7 @@ module serdes_ecc #(
 
     );
 
-    serdes #(.FIFO_DEPTH(16),.DATA_WIDTH(DATA_WIDTH),.HAS_ECC(1)) serdes_inst
+    serdes #(.FIFO_DEPTH(16),.DATA_WIDTH(DATA_WIDTH),.HAS_ECC(1),.HAS_SNIFFER(1)) serdes_inst
         (
             .clk_i,
             .rst_n_i,
