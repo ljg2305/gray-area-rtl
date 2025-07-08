@@ -20,11 +20,14 @@ module deserializer #(
 
     logic [PARALLEL_DATA_WIDTH-1:0] parallel_regs;
     logic [PARALLEL_DATA_WIDTH-1:0] parallel_regs_padded;
-    logic [DATA_WIDTH-1:0] parallel_regs_ecc;
-    logic [COUNTER_WIDTH:0] bit_counter;
+    logic [DATA_WIDTH-1:0]          parallel_regs_ecc;
+    logic [COUNTER_WIDTH:0]         bit_counter;
     logic in_packet;
     logic valid;
-    logic [DATA_WIDTH-1:0] parallel_out;
+    logic [DATA_WIDTH-1:0]      parallel_out;
+
+    logic [ADDR_WIDTH-1:0]      fault_location;
+    logic [1:0]                 num_errors;
 
     assign parallel_out = valid ? parallel_regs_ecc : '0;
 
@@ -81,8 +84,8 @@ module deserializer #(
             .data_in_i(parallel_regs_padded),
             .raw_data_o(),
             .data_out_o(parallel_regs_ecc),
-            .fault_location_o(fault_location_o),
-            .num_errors_o(num_errors_o)
+            .fault_location_o(fault_location),
+            .num_errors_o(num_errors)
             );
 
             // FLOP outputs
@@ -90,16 +93,23 @@ module deserializer #(
                 if (!rst_n_i) begin
                     valid_o <= '0;
                     parallel_out_o <= '0;
+                    fault_location_o <= '0;
+                    num_errors_o <= '0;
                 end else begin
                     parallel_out_o <= parallel_out;
                     valid_o <= valid;
+                    fault_location_o <= valid ? fault_location : '0;
+                    num_errors_o <= valid ? num_errors : '0;
                 end
             end
+
 
         end else begin : g_output_logic
             assign parallel_regs_ecc = parallel_regs;
             assign parallel_out_o = parallel_out;
             assign valid_o = valid;
+            assign fault_location_o = '0;
+            assign num_errors_o     = '0;
         end
     endgenerate
 
