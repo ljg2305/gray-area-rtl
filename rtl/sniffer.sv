@@ -29,8 +29,8 @@ module sniffer (
     logic          enable_reg, enable_next;
     logic          corrupt;
 
-    logic [$clog2($bits(nibble_check_reg))-1:0] bit_counter, next_bit_counter, nibble_index; 
-    logic [$bits(num_errors_reg)-1:0]           error_counter, next_error_counter; 
+    logic [$clog2($bits(nibble_check_reg))-1:0] bit_counter, next_bit_counter, nibble_index;
+    logic [$bits(num_errors_reg)-1:0]           error_counter, next_error_counter;
 
     assign nibble_check_next = nibble_check_reg;
     assign num_errors_next   = num_errors_reg;
@@ -52,58 +52,57 @@ module sniffer (
     state_t state, next_state;
 
     always_ff @(posedge clk_i ) begin
-        if (!rst_n_i) begin 
+        if (!rst_n_i) begin
             state <= WAIT;
             bit_counter <= '0;
             error_counter <= '0;
-        end else begin 
+        end else begin
             state <= next_state;
-            bit_counter <= next_bit_counter; 
-            error_counter <= next_error_counter; 
+            bit_counter <= next_bit_counter;
+            error_counter <= next_error_counter;
         end
     end
-    
-    //inverting as we send MSB first from sender 
+
+    //inverting as we send MSB first from sender
     assign nibble_index = 2**$bits(nibble_check_reg) - 1 -bit_counter;
-    // assign bit_counter;
 
     always_comb begin
-        // defaults 
-        next_state = state; 
+        // defaults
+        next_state = state;
         next_bit_counter = bit_counter;
-        
+
         unique case (state)
             WAIT: begin
-                if (start_i && serial_in_i == nibble_check_reg[nibble_index]) begin 
+                if (start_i && serial_in_i == nibble_check_reg[nibble_index]) begin
                     next_state = PARSE;
                     next_bit_counter = bit_counter + 1;
-                end 
+                end
             end
 
             PARSE: begin
-                if ( serial_in_i == nibble_check_reg[nibble_index]) begin 
+                if ( serial_in_i == nibble_check_reg[nibble_index]) begin
                     next_bit_counter = bit_counter + 1;
-                    if ( nibble_index == 0 ) begin 
-                        if (num_errors_reg == 0) begin 
+                    if ( nibble_index == 0 ) begin
+                        if (num_errors_reg == 0) begin
                             next_state = WAIT;
-                        end else begin 
+                        end else begin
                             next_state = CORRUPT;
                             next_bit_counter = 0;
-                            next_error_counter = error_counter + 1; 
-                        end 
+                            next_error_counter = error_counter + 1;
+                        end
                     end
-                end else begin 
+                end else begin
                     next_state = WAIT;
                     next_bit_counter = 0;
-                end 
+                end
             end
 
             CORRUPT: begin
-                if (error_counter >= num_errors_reg ) begin 
+                if (error_counter >= num_errors_reg ) begin
                     next_state = WAIT;
                     next_error_counter = '0;
-                end 
-                next_error_counter = error_counter + 1; 
+                end
+                next_error_counter = error_counter + 1;
             end
 
             default: next_state = WAIT;
@@ -111,7 +110,7 @@ module sniffer (
     end
 
     assign corrupt = state == CORRUPT ? 1'b1 : 1'b0;
-    
+
 `ifndef synthesis
 
 //initial begin

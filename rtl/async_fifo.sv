@@ -1,7 +1,7 @@
 async_fifo
     #(
         int DATA_WIDTH = 8,
-        int FIFO_DEPTH = 16, 
+        int FIFO_DEPTH = 16,
     ) (
         input logic                     wr_clk_i,
         input logic                     wr_rst_n_i,
@@ -9,7 +9,7 @@ async_fifo
         input logic [DATA_WIDTH-1:0]    wr_data_i,
         output logic                    full_o,
 
-        input logic                     rd_clk_i, 
+        input logic                     rd_clk_i,
         input logic                     rd_rst_n_i,
         input logic                     rd_enable_i,
         output logic [DATA_WIDTH-1:0]   rd_data_o,
@@ -17,12 +17,12 @@ async_fifo
     );
     parameter int PTR_WIDTH = $clog2(FIFO_DEPTH)+1;
 
-    // signals 
+    // signals
 
-    //WRITE SIDE SIGNALS 
+    //WRITE SIDE SIGNALS
     logic [FIFO_DEPTH-1:0] [DATA_WIDTH-1:0] mem ;
 
-    logic wr_en; 
+    logic wr_en;
     logic [PTR_WIDTH-1:0] wr_ptr;
     logic [PTR_WIDTH-1:0] wr_ptr_gray_coded;
     logic [PTR_WIDTH-1:0] rd_ptr_wr_dom;
@@ -33,22 +33,22 @@ async_fifo
     logic [PTR_WIDTH-1:0] rd_ptr;
     logic [PTR_WIDTH-1:0] rd_ptr_gray_coded;
     logic [PTR_WIDTH-1:0] wr_ptr_rd_dom;
-    logic [DATA_WIDTH-1:0] rd_data; 
+    logic [DATA_WIDTH-1:0] rd_data;
     logic empty;
 
-    // WRITE SIDE LOGIC 
+    // WRITE SIDE LOGIC
     assign full = {!wr_ptr[PTR_WIDTH-1],wr_ptr[PTR_WIDTH-2:0]} == rd_ptr_wr_dom;
-    assign wr_en = wr_enable_i && !full; 
+    assign wr_en = wr_enable_i && !full;
 
     always_ff @(posedge wr_clk_i && negedge wr_rst_n_i) begin
         if (!wr_rst_n_i) begin
             mem <= '0;
             wr_ptr <= '0;
-        end else begin 
-            if (wr_en) begin 
+        end else begin
+            if (wr_en) begin
                 mem[wr_ptr] <= wr_data;
                 wr_ptr <= wr_ptr+1;
-            end 
+            end
         end
     end
 
@@ -64,17 +64,17 @@ async_fifo
         .binary_o(rd_ptr_wr_dom),
     );
 
-    // READ SIDE LOGIC 
+    // READ SIDE LOGIC
     assign empty = wr_ptr_rd_dom == rd_ptr;
-    assign rd_en = rd_enable_i && !empty; 
+    assign rd_en = rd_enable_i && !empty;
 
     always_ff @(posedge rd_clk_i && negedge rd_rst_n_i) begin
         if (!rd_rst_n_i) begin
             rd_ptr <= '0;
-        end else begin 
-            if (rd_en) begin 
+        end else begin
+            if (rd_en) begin
                 rd_ptr <= rd_ptr+1;
-            end 
+            end
         end
     end
 
@@ -93,8 +93,8 @@ async_fifo
     assign rd_data = mem[rd_ptr];
 
     // outputs
-    assign full_o = full; 
-    assign empty_o = empty; 
-    assign rd_data_o = rd_data; 
+    assign full_o = full;
+    assign empty_o = empty;
+    assign rd_data_o = rd_data;
 
-endmodule // async_fifo 
+endmodule // async_fifo
