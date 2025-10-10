@@ -1,7 +1,7 @@
-async_fifo
+module async_fifo
     #(
         int DATA_WIDTH = 8,
-        int FIFO_DEPTH = 16,
+        int FIFO_DEPTH = 16
     ) (
         input logic                     wr_clk_i,
         input logic                     wr_rst_n_i,
@@ -15,6 +15,7 @@ async_fifo
         output logic [DATA_WIDTH-1:0]   rd_data_o,
         output logic                    empty_o
     );
+    parameter int ADDR_WIDTH = $clog2(FIFO_DEPTH);
     parameter int PTR_WIDTH = $clog2(FIFO_DEPTH)+1;
 
     // signals
@@ -40,35 +41,35 @@ async_fifo
     assign full = {!wr_ptr[PTR_WIDTH-1],wr_ptr[PTR_WIDTH-2:0]} == rd_ptr_wr_dom;
     assign wr_en = wr_enable_i && !full;
 
-    always_ff @(posedge wr_clk_i && negedge wr_rst_n_i) begin
+    always_ff @(posedge wr_clk_i or negedge wr_rst_n_i) begin
         if (!wr_rst_n_i) begin
             mem <= '0;
             wr_ptr <= '0;
         end else begin
             if (wr_en) begin
-                mem[wr_ptr] <= wr_data;
+                mem[wr_ptr] <= wr_data_i;
                 wr_ptr <= wr_ptr+1;
             end
         end
     end
 
-    b2g b2g_wr_ptr_inst #(.WIDTH(PTR_WIDTH)) (
+    b2g #(.WIDTH(PTR_WIDTH)) b2g_wr_ptr_inst (
         .binary_i(wr_ptr),
         .gray_code_o(wr_ptr_gray_coded)
     );
 
-    g2b g2b_rd_ptr_inst #(.WIDTH(PTR_WIDTH)) (
+    g2b #(.WIDTH(PTR_WIDTH)) g2b_rd_ptr_inst (
         .clk_i(wr_clk_i),
         .rst_n_i(wr_rst_n_i),
-        .gray_code_i(rd_ptr_gray_coded)
-        .binary_o(rd_ptr_wr_dom),
+        .gray_code_i(rd_ptr_gray_coded),
+        .binary_o(rd_ptr_wr_dom)
     );
 
     // READ SIDE LOGIC
     assign empty = wr_ptr_rd_dom == rd_ptr;
     assign rd_en = rd_enable_i && !empty;
 
-    always_ff @(posedge rd_clk_i && negedge rd_rst_n_i) begin
+    always_ff @(posedge rd_clk_i or negedge rd_rst_n_i) begin
         if (!rd_rst_n_i) begin
             rd_ptr <= '0;
         end else begin
@@ -78,16 +79,16 @@ async_fifo
         end
     end
 
-    b2g b2g_rd_ptr_inst #(.WIDTH(PTR_WIDTH)) (
+    b2g #(.WIDTH(PTR_WIDTH)) b2g_rd_ptr_inst (
         .binary_i(rd_ptr),
         .gray_code_o(rd_ptr_gray_coded)
     );
 
-    g2b g2b_wr_ptr_inst #(.WIDTH(PTR_WIDTH)) (
+    g2b #(.WIDTH(PTR_WIDTH)) g2b_wr_ptr_inst (
         .clk_i(rd_clk_i),
         .rst_n_i(rd_rst_n_i),
-        .gray_code_i(wr_ptr_gray_coded)
-        .binary_o(wr_ptr_rd_dom),
+        .gray_code_i(wr_ptr_gray_coded),
+        .binary_o(wr_ptr_rd_dom)
     );
 
     assign rd_data = mem[rd_ptr];
@@ -97,4 +98,9 @@ async_fifo
     assign empty_o = empty;
     assign rd_data_o = rd_data;
 
+
+initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(1,async_fifo);
+end
 endmodule // async_fifo

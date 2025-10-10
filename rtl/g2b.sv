@@ -16,7 +16,7 @@ generate
         assign gray_code = gray_code_i;
     end else begin
 
-        always_ff @( posedge clk_i && negedge rst_n_i) begin
+        always_ff @( posedge clk_i or negedge rst_n_i) begin
             if (!rst_n_i) begin
                 cdc_stage <= '0;
             end else begin
@@ -34,9 +34,15 @@ generate
 endgenerate
 
 
-assign binary_o[WIDTH-1] = gray_code[WIDTH-1];
-for (int i = 0; i < WIDTH-2; i = i +1 ) begin
-    assign binary_o[WIDTH-2-i] = binary_o[WIDTH-1-i] ^ gray_code[WIDTH-2-i];
+always_comb begin
+    binary_o[WIDTH-1] = gray_code[WIDTH-1];
+    for (int j= 0; j< WIDTH-1; j= j+1 ) begin
+        binary_o[WIDTH-2-j] = binary_o[WIDTH-1-j] ^ gray_code[WIDTH-2-j];
+    end
 end
 
+initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(1,g2b);
+end
 endmodule
